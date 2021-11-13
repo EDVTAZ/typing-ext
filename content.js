@@ -1,4 +1,5 @@
-const typedClass = 'typing-ext-typed'
+const TYPEXT_TYPED = 'typext-typed';
+const TYPEXT_NAMESPACE = 'typext-namespace';
 let buffer = '';
 let coloredElements = [];
 
@@ -12,15 +13,32 @@ document.addEventListener('keydown', (ev) => {
 function updateDOM(elements) {
     for (let el of coloredElements) {
         if (!elements.includes(el)) {
-            el.classList.remove(typedClass);
+            el.classList.remove(TYPEXT_TYPED);
         }
     }
     for (let el of elements) {
-        if (!el.classList.contains(typedClass)) {
-            el.classList.add(typedClass);
+        if (!el.classList.contains(TYPEXT_TYPED)) {
+            el.classList.add(TYPEXT_TYPED);
+            repack(el);
         }
     }
     coloredElements = elements;
+}
+
+function repack(element) {
+    if (element.classList.contains(TYPEXT_NAMESPACE)) {
+        return;
+    }
+    let cNodes = element.childNodes;
+    for (let i=0; i<cNodes.length; ++i) {
+        let node = cNodes[i];
+        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0) {
+            const span = document.createElement("span");
+            span.className = TYPEXT_NAMESPACE;
+            element.insertBefore(span, node);
+            span.appendChild(node);
+        }
+    }
 }
 
 function searchDOM(query) {

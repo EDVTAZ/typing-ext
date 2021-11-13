@@ -6,3 +6,12 @@
 .typext-typed a {
     color: green;
 }
+
+.typext-highlight {
+    background-color: lightseagreen;
+
+}
+
+.typext-highlight a {
+    background-color: lightseagreen;
+}

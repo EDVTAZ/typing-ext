@@ -1,5 +1,12 @@
 const TYPEXT_TYPED = 'typext-typed';
 const TYPEXT_NAMESPACE = 'typext-namespace';
+const TYPEXT_HIGHLIGHT = 'typext-highlight';
+const TYPEXT_STATES = {
+    LOOKING: 'LOOKING',
+    LOCKED: 'LOCKED',
+};
+
+let state = TYPEXT_STATES.LOOKING;
 let buffer = '';
 let coloredElements = [];
 
@@ -13,13 +20,13 @@ document.addEventListener('keydown', (ev) => {
 function updateDOM(elements) {
     for (let el of coloredElements) {
         if (!elements.includes(el)) {
-            el.classList.remove(TYPEXT_TYPED);
+            el.classList.remove(TYPEXT_HIGHLIGHT);
         }
     }
     for (let el of elements) {
-        if (!el.classList.contains(TYPEXT_TYPED)) {
-            el.classList.add(TYPEXT_TYPED);
-            repack(el);
+        if (!el.classList.contains(TYPEXT_HIGHLIGHT)) {
+            el.classList.add(TYPEXT_HIGHLIGHT);
+            // repack(el);
         }
     }
     coloredElements = elements;
@@ -62,6 +69,13 @@ function updateBuffer(ev) {
         case 'Delete':
             buffer = '';
             break;
+        case 'Enter':
+            if (state === TYPEXT_STATES.LOOKING) {
+                lockState();
+            }
+            if (state === TYPEXT_STATES.LOCKED) {
+                unlockState();
+            }
     }
     
     if (ev.key.length == 1) {
@@ -69,6 +83,36 @@ function updateBuffer(ev) {
     }
 
     console.log(buffer);
+}
+
+function lockState() {
+    state = TYPEXT_STATES.LOCKED;
+    let focusedElement = searchDOM(buffer)[0];
+    repack(focusedElement);
+    let startPosition = focusedElement.innerText.search(buffer);
+    while (focusedElement.children.length > 0) {
+        let children = focusedElement.children;
+        let currentSum = children[0].innerText.length;
+        let idx;
+        for (idx=1; idx<focusedElement.children.length &&
+                      currentSum + children[idx].innerText.length < startPosition; ++idx) {
+            currentSum += children[idx].innerText.length;
+        }
+        repack(children[idx]);
+        focusedElement = children[idx];
+        startPosition -= currentSum;
+    }
+
+    console.log({focusedElement});
+    console.log({startPosition});
+
+    // TODO split focusedElement so startPosition is pos 0 in the new element created
+    // TODO color until end position (also find it...) and split there as well
+}
+
+function unlockState() {
+    state = TYPEXT_STATES.LOOKING;
+    // TODO
 }
 
 let previousXpathStringSearch = [null, null];

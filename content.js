@@ -39,7 +39,7 @@ function repack(element) {
     let cNodes = element.childNodes;
     for (let i=0; i<cNodes.length; ++i) {
         let node = cNodes[i];
-        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0) {
+        if (node.nodeType === Node.TEXT_NODE) {
             const span = document.createElement("span");
             span.className = TYPEXT_NAMESPACE;
             element.insertBefore(span, node);
@@ -49,7 +49,7 @@ function repack(element) {
 }
 
 function searchDOM(query) {
-    if (buffer.length > 4) {
+    if (query.length > 4) {
         return xpathStringSearch(query);
     }
     return [];
@@ -71,7 +71,7 @@ function updateBuffer(ev) {
             break;
         case 'Enter':
             if (state === TYPEXT_STATES.LOOKING) {
-                lockState();
+                lockState(buffer);
             }
             if (state === TYPEXT_STATES.LOCKED) {
                 unlockState();
@@ -85,17 +85,18 @@ function updateBuffer(ev) {
     console.log(buffer);
 }
 
-function lockState() {
+// TODO handle if buffer isn't found in page
+function lockState(buffer) {
     state = TYPEXT_STATES.LOCKED;
-    let focusedElement = searchDOM(buffer)[0];
+    let focusedElement = xpathStringSearch(buffer)[0];
     repack(focusedElement);
     let startPosition = focusedElement.innerText.search(buffer);
     while (focusedElement.children.length > 0) {
         let children = focusedElement.children;
-        let currentSum = children[0].innerText.length;
+        let currentSum = 0;
         let idx;
-        for (idx=1; idx<focusedElement.children.length &&
-                      currentSum + children[idx].innerText.length < startPosition; ++idx) {
+        for (idx=0; idx<focusedElement.children.length &&
+                    currentSum + children[idx].innerText.length < startPosition; ++idx) {
             currentSum += children[idx].innerText.length;
         }
         repack(children[idx]);
@@ -106,8 +107,75 @@ function lockState() {
     console.log({focusedElement});
     console.log({startPosition});
 
-    // TODO split focusedElement so startPosition is pos 0 in the new element created
-    // TODO color until end position (also find it...) and split there as well
+    lockElement(focusedElement, startPosition, buffer.length);
+}
+
+function lockElement(el, pos, len) {
+    if (len === 0) {
+        console.warn('lockElement called with', {el, pos, len});
+    }
+
+    if (pos !== 0) {
+        [_, right] = splitElement(el, pos);
+
+        el = right;
+    }
+
+    if (len === el.innerText.length) {
+        el.classList.add(TYPEXT_TYPED);
+    }
+    else if (len < el.innerText.length) {
+        [left, _]  = splitElement(el, len);
+        left.classList.add(TYPEXT_TYPED);
+    }
+    else if (len > el.innerText.length) {
+        el.classList.add(TYPEXT_TYPED);
+        lockElement(getNextElementWithText(el), 0, len-el.innerText.length);
+    }
+}
+
+function getNextElementWithText(el, step=true) {
+    repack(el.parentElement);
+    repack(el);
+    if (!step) {
+        if (el.innerText.length > 0) {
+            return getNEWTstephelper(el);
+        }
+    }
+    while (el.nextElementSibling) {
+        el = el.nextElementSibling;
+        if (el.innerText.length > 0) {
+            return getNEWTstephelper(el);
+        }
+    } 
+
+    // look at higher level
+    return getNextElementWithText(el.parentElement, step=true);
+}
+
+function getNEWTstephelper(el) {
+    repack(el);
+    if (el.classList.contains(TYPEXT_NAMESPACE) && el.children.length === 0) {
+        return el;
+    } else {
+        return getNextElementWithText(el.children[0], step=false);
+    }
+}
+
+function splitElement(el, pos) {
+    let left = document.createElement('span');
+    let right = document.createElement('span');
+
+    left.innerText = el.innerText.slice(0, pos);
+    left.className = TYPEXT_NAMESPACE;
+    right.innerText = el.innerText.slice(pos);
+    right.className = TYPEXT_NAMESPACE;
+
+    el.innerText = '';
+    el.appendChild(left);
+    el.appendChild(right);
+
+    return [left, right];
 }
 
 function unlockState() {
@@ -163,8 +231,8 @@ function isVisible(element) {
     return (style.display !== 'none')
 }
 
-function xpath(query, node) {
-    return document.evaluate(query, node, null, XPathResult.ANY_TYPE, null);
+function xpath(query, node, type=XPathResult.ANY_TYPE) {
+    return document.evaluate(query, node, null, type, null);
 }
 
 const preventedKeys = ['Space', 'Backspace', 'Delete'];

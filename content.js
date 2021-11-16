@@ -7,6 +7,9 @@ const TYPEXT_STATES = {
 };
 
 let state = TYPEXT_STATES.LOOKING;
+let cursor = null;
+let cursorChain = [];
+let wrongCharCount = 0;
 let buffer = '';
 let coloredElements = [];
 
@@ -26,7 +29,6 @@ function updateDOM(elements) {
     for (let el of elements) {
         if (!el.classList.contains(TYPEXT_HIGHLIGHT)) {
             el.classList.add(TYPEXT_HIGHLIGHT);
-            // repack(el);
         }
     }
     coloredElements = elements;
@@ -64,6 +66,13 @@ function updateBuffer(ev) {
         case 'Backspace':
             if (buffer.length > 1) {
                 buffer = buffer.slice(0, buffer.length-1);
+                if (wrongCharCount > 0) {
+                    wrongCharCount--;
+                }
+                else if (state === TYPEXT_STATES.LOCKED) {
+                    shrinkTyped();
+                    console.log(cursorChain);
+                }
             }
             break;
         case 'Delete':
@@ -73,19 +82,70 @@ function updateBuffer(ev) {
             if (state === TYPEXT_STATES.LOOKING) {
                 lockState(buffer);
             }
-            if (state === TYPEXT_STATES.LOCKED) {
+            else if (state === TYPEXT_STATES.LOCKED) {
                 unlockState();
             }
     }
     
-    if (ev.key.length == 1) {
+    if (ev.key.length === 1) {
         buffer += ev.key;
+        if (state === TYPEXT_STATES.LOCKED) {
+            extendTyped(ev.key);
+        }
     }
 
     console.log(buffer);
 }
+// todo dstroy empty elements
+function shrinkTyped() {
+    if (cursor.innerText.length > 0) {
+        if (cursor.nextElementSibling) {
+            let nextEl = cursor.nextElementSibling;
+            if (nextEl.classList.contains(TYPEXT_NAMESPACE) && nextEl.children.length == 0) {
+                left = cursor.innerText.slice(0, -1);;
+                right = cursor.innerText.at(-1) + nextEl.innerText;
 
-// TODO handle if buffer isn't found in page
+                cursor.innerText = left;
+                nextEl.innerText = right;
+                return;
+            }
+        }
+        if (cursor.innerText.length === 1) {
+            cursor.classList.remove(TYPEXT_TYPED);
+            cursorChain.pop();
+            cursor = cursorChain.at(-1);
+            return;
+        }
+        cursor.classList.remove(TYPEXT_TYPED);
+        [cursor, nextEl] = splitElement(cursor, -1);
+        cursor.classList.add(TYPEXT_TYPED);
+        cursorChain.pop();
+        cursorChain.push(cursor);
+    } else {
+        cursor.remove();
+        cursorChain.pop();
+        cursor = cursorChain.at(-1);
+        shrinkTyped();
+    }
+}
+
+function extendTyped(newChar) {
+    let nextEl = getNextElementWithText(cursor, step=true);
+    if (wrongCharCount > 0 || nextEl.innerText[0] !== newChar) {
+        wrongCharCount += 1;
+        return;
+    }
+    if (nextEl === cursor.nextElementSibling) {
+        left = cursor.innerText + newChar;
+        right = nextEl.innerText.slice(1);
+
+        cursor.innerText = left;
+        nextEl.innerText = right;
+    } else {
+        lockElement(nextEl, 0, 1);
+    }
+}
+
 function lockState(buffer) {
     let focusedElement = xpathStringSearch(buffer)?.[0];
     if (!focusedElement) {
@@ -126,13 +186,18 @@ function lockElement(el, pos, len) {
 
     if (len === el.innerText.length) {
         el.classList.add(TYPEXT_TYPED);
+        cursor = el;
+        cursorChain.push(cursor);
     }
     else if (len < el.innerText.length) {
         [left, _]  = splitElement(el, len);
         left.classList.add(TYPEXT_TYPED);
+        cursor = left;
+        cursorChain.push(cursor);
     }
     else if (len > el.innerText.length) {
         el.classList.add(TYPEXT_TYPED);
+        cursorChain.push(el);
         lockElement(getNextElementWithText(el), 0, len-el.innerText.length);
     }
 }

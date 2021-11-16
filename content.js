@@ -87,8 +87,11 @@ function updateBuffer(ev) {
 
 // TODO handle if buffer isn't found in page
 function lockState(buffer) {
+    let focusedElement = xpathStringSearch(buffer)?.[0];
+    if (!focusedElement) {
+        return
+    }
     state = TYPEXT_STATES.LOCKED;
-    let focusedElement = xpathStringSearch(buffer)[0];
     repack(focusedElement);
     let startPosition = focusedElement.innerText.search(buffer);
     while (focusedElement.children.length > 0) {

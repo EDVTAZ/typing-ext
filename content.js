@@ -5,6 +5,7 @@ const TYPEXT_STATES = {
     LOOKING: 'LOOKING',
     LOCKED: 'LOCKED',
 };
+const TYPEXT_WILDCARD_CHAR = '.';
 
 let state = TYPEXT_STATES.LOOKING;
 let cursor = null;
@@ -96,7 +97,7 @@ function updateBuffer(ev) {
 
     console.log(buffer);
 }
-// todo dstroy empty elements
+
 function shrinkTyped() {
     if (cursor.innerText.length > 0) {
         if (cursor.nextElementSibling) {
@@ -131,10 +132,14 @@ function shrinkTyped() {
 
 function extendTyped(newChar) {
     let nextEl = getNextElementWithText(cursor, step=true);
+    if (newChar === TYPEXT_WILDCARD_CHAR) {
+        newChar = nextEl.innerText[0];
+    }
     if (wrongCharCount > 0 || nextEl.innerText[0] !== newChar) {
         wrongCharCount += 1;
         return;
     }
+
     if (nextEl === cursor.nextElementSibling) {
         left = cursor.innerText + newChar;
         right = nextEl.innerText.slice(1);
@@ -151,9 +156,13 @@ function lockState(buffer) {
     if (!focusedElement) {
         return
     }
-    state = TYPEXT_STATES.LOCKED;
     repack(focusedElement);
-    let startPosition = focusedElement.innerText.search(buffer);
+    let startPosition = focusedElement.innerText.indexOf(buffer);
+    if (startPosition === -1) {
+        console.log('Error locking state, string not found!');
+        return
+    }
+    state = TYPEXT_STATES.LOCKED;
     while (focusedElement.children.length > 0) {
         let children = focusedElement.children;
         let currentSum = 0;

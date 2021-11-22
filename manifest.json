@@ -26,8 +26,14 @@
   "content_scripts": [
    {
      "matches": ["<all_urls>"],
-     "js": ["content.js"],
-     "css": ["content.css"]
+     "js": [
+        "content_scripts/init.js",
+        "content_scripts/DOMutils.js",
+        "content_scripts/typing.js",
+        "content_scripts/xpath.js",
+        "content_scripts/main.js"
+      ],
+     "css": ["content_styles/content.css"]
    }
  ]
 }

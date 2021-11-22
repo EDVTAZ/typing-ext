@@ -1,10 +1,11 @@
 .typext-typed {
-    color: red;
-
+    color: #ffa600;
+    background-color: #003f5c;
 }
 
 .typext-typed a {
-    color: red;
+    color: #ffa600;
+    background-color: #003f5c;
 }
 
 .typext-highlight {

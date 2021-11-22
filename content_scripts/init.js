@@ -6,8 +6,10 @@ const consts = {
     HIGHLIGHT: 'typext-highlight',
     WILDCARD_CHAR: '.',
     states: {
+        OFF: 'OFF',
         LOOKING: 'LOOKING',
         LOCKED: 'LOCKED',
+        ANIMATION: 'ANIMATION',
     },
     keys: {
         Backspace: 'Backspace',

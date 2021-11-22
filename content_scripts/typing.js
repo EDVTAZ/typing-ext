@@ -119,7 +119,36 @@ function unlockState() {
     // TODO
 }
 
+async function visualEmptyBuffer() {
+    let len = egt.state.buffer.length;
+    let cstate = egt.state.mode;
+    if (cstate !== egt.consts.states.LOCKED) {
+        return;
+    }
+    egt.state.mode = egt.consts.states.ANIMATION;
+    for (let i=0; i<len; ++i) {
+        backspaceDel();
+        await egt.sleep(7);
+    }
+    egt.state.mode = cstate;
+}
+
+function backspaceDel() {
+    if (egt.state.buffer.length > 0) {
+        egt.state.buffer = egt.state.buffer.slice(0, egt.state.buffer.length-1);
+        if (egt.state.wrongCharCount > 0) {
+            egt.state.wrongCharCount--;
+        }
+        else {
+            shrinkTyped();
+        }
+    }
+}
+
+
 globalThis.typext.extendTyped = extendTyped;
 globalThis.typext.shrinkTyped = shrinkTyped;
 globalThis.typext.lockState = lockState;
 globalThis.typext.unlockState = unlockState;
+globalThis.typext.visualEmptyBuffer = visualEmptyBuffer;
+globalThis.typext.backspaceDel = backspaceDel;

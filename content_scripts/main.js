@@ -9,23 +9,28 @@ function handleKeyEvent(ev) {
     if (keypressPreventDefault(ev)) {
         return;
     }
+    if (egt.state.mode === egt.consts.states.ANIMATION) {
+        return;
+    }
 
     switch (ev.code) {
         case egt.consts.keys.Backspace:
-            if (egt.state.buffer.length > 0) {
-                egt.state.buffer = egt.state.buffer.slice(0, egt.state.buffer.length-1);
-                if (egt.state.wrongCharCount > 0) {
-                    egt.state.wrongCharCount--;
-                }
-                else if (egt.state.mode === egt.consts.states.LOCKED) {
-                    egt.shrinkTyped();
-                    console.log(egt.state.cursorChain);
+            if (egt.state.mode === egt.consts.states.LOCKED) {
+                egt.backspaceDel();
+            }
+            else if (egt.state.mode === egt.consts.states.LOOKING) {
+                if (egt.state.buffer.length > 0) {
+                    egt.state.buffer = egt.state.buffer.slice(0, egt.state.buffer.length-1);
                 }
             }
             break;
         case egt.consts.keys.Delete:
-            egt.egt.stat.modee.buffer = '';
-            // TODO handle this
+            if (egt.state.mode === egt.consts.states.LOCKED) {
+                egt.visualEmptyBuffer();
+            }
+            else if (egt.state.mode === egt.consts.states.LOOKING) {
+                egt.state.mode.buffer = '';
+            }
             break;
         case 'Enter':
             if (egt.state.mode === egt.consts.states.LOOKING) {

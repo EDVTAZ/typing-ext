@@ -48,4 +48,4 @@ function xpath(query, node, type=XPathResult.ANY_TYPE) {
 }
 
 
-globalThis.typext.xpathStringSearch = xpathStringSearch;
+egt.xpathStringSearch = xpathStringSearch;

@@ -91,7 +91,7 @@ function lockElement(el, pos, len) {
     }
 
     if (pos !== 0) {
-        [_, right] = egt.splitElement(el, pos);
+        let [_, right] = egt.splitElement(el, pos);
 
         el = right;
     }
@@ -112,11 +112,6 @@ function lockElement(el, pos, len) {
         egt.state.cursorChain.push(el);
         lockElement(egt.getNextElementWithText(el, true), 0, len-el.innerText.length);
     }
-}
-
-function unlockState() {
-    egt.state.mode = egt.consts.states.LOOKING;
-    // TODO
 }
 
 async function visualEmptyBuffer() {
@@ -145,10 +140,16 @@ function backspaceDel() {
     }
 }
 
+function unlockState() {
+    egt.state.mode = egt.consts.states.LOOKING;
+    egt.history.push(egt.state);
+    egt.state = egt.initState();
+}
 
-globalThis.typext.extendTyped = extendTyped;
-globalThis.typext.shrinkTyped = shrinkTyped;
-globalThis.typext.lockState = lockState;
-globalThis.typext.unlockState = unlockState;
-globalThis.typext.visualEmptyBuffer = visualEmptyBuffer;
-globalThis.typext.backspaceDel = backspaceDel;
+
+egt.extendTyped = extendTyped;
+egt.shrinkTyped = shrinkTyped;
+egt.lockState = lockState;
+egt.unlockState = unlockState;
+egt.visualEmptyBuffer = visualEmptyBuffer;
+egt.backspaceDel = backspaceDel;

@@ -22,7 +22,12 @@ const consts = {
 
 globalThis.typext = {
     consts,
-    state: {
+    state: initState(),
+    history: [],
+};
+
+function initState() {
+    return {
         mode: consts.states.LOOKING,
         cursor: null,
         cursorChain: [],
@@ -30,6 +35,7 @@ globalThis.typext = {
         buffer: '',
         coloredElements: [],
     }
-};
+}
 
 const egt = globalThis.typext;
+egt.initState = initState;

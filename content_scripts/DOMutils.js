@@ -66,7 +66,7 @@ function isVisible(element) {
 }
 
 
-globalThis.typext.repack = repack;
-globalThis.typext.getNextElementWithText = getNextElementWithText;
-globalThis.typext.splitElement = splitElement;
-globalThis.typext.isVisible = isVisible;
+egt.repack = repack;
+egt.getNextElementWithText = getNextElementWithText;
+egt.splitElement = splitElement;
+egt.isVisible = isVisible;

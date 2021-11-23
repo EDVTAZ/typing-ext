@@ -1,18 +1,63 @@
 .typext-typed {
-    color: #ffa600;
-    background-color: #003f5c;
+  color: #ffa600;
+  background-color: #003f5c;
 }
 
 .typext-typed a {
-    color: #ffa600;
-    background-color: #003f5c;
+  color: #ffa600;
+  background-color: #003f5c;
 }
 
 .typext-highlight {
-    background-color: #c9dcff;
+  background-color: #c9dcff;
 
 }
 
 .typext-highlight a {
-    background-color: #c9dcff;
+  background-color: #c9dcff;
+}
+
+.typext-hud-frame {
+  width: 60vw;
+  height: auto;
+  position: fixed;
+  bottom: 20vh;
+  left: 50vw;
+  transform: translate(-50%,100%);
+  opacity: 0.9;
+  border-left: solid black 2px;
+  border-right: solid black 2px;
+  border-top: solid black 2px;
+}
+
+.typext-hud-container {
+  height: 50px;
+  font-size: 180%;
+  width: 100%;
+  border-bottom: solid black 2px;
+  display: flex;
+}
+
+.typext-hud-textbox {
+  width: 50%;
+  display: flex;
+  align-items: center;
+}
+
+.typext-hud-textleft {
+  justify-content: right;
+}
+
+.typext-hud-textright {
+  justify-content: left;
+}
+
+.typext-hud-dominant {
+  color: #ffa600;
+  background-color: #58508d;
+}
+
+.typext-hud-weak {
+  color: #ffa600;
+  background-color: #847ead;
 }

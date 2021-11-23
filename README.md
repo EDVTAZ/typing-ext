@@ -1,5 +1,9 @@
 # TODO
-* delete
 * three states (off, looking, locked)
-* clear highlights
 * jump between buffers
+* scroll into view
+* HUD interface
+* handle iframes and shadow roots
+* handle no next element
+* colors...
+* iframe -> shadow root

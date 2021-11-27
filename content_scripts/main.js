@@ -1,19 +1,28 @@
 "use strict";
 
 document.addEventListener('keydown', (ev) => {
+    keypressPreventDefault(ev);
     handleKeyEvent(ev);
-    highlightBufferMatches(egt.state.buffer);
 });
 
 function handleKeyEvent(ev) {
-    if (keypressPreventDefault(ev)) {
+    if (egt.state.mode === egt.consts.states.ANIMATION) {
         return;
     }
-    if (egt.state.mode === egt.consts.states.ANIMATION) {
+    if (egt.state.mode === egt.consts.states.OFF) {
+        if (ev.code === egt.consts.keys.F2) {
+            egt.state.mode = egt.state.prevmode;
+            egt.showHUD();
+        }
         return;
     }
 
     switch (ev.code) {
+        case egt.consts.keys.F2:
+            egt.state.prevmode = egt.state.mode;
+            egt.state.mode = egt.consts.states.OFF;
+            egt.hideHUD();
+            break;
         case egt.consts.keys.Backspace:
             if (egt.state.mode === egt.consts.states.LOCKED) {
                 egt.backspaceDel();
@@ -32,9 +41,10 @@ function handleKeyEvent(ev) {
                 egt.state.mode.buffer = '';
             }
             break;
-        case 'Enter':
+        case egt.consts.keys.Enter:
             if (egt.state.mode === egt.consts.states.LOOKING) {
                 egt.lockState(egt.state.buffer);
+                egt.highlightBufferMatches('');
             }
             else if (egt.state.mode === egt.consts.states.LOCKED) {
                 egt.unlockState();
@@ -43,43 +53,33 @@ function handleKeyEvent(ev) {
     
     if (ev.key.length === 1) {
         egt.state.buffer += ev.key;
-        if (egt.state.mode === egt.consts.states.LOCKED) {
-            egt.extendTyped(ev.key);
+        switch (egt.state.mode) {
+            case egt.consts.states.LOCKED:
+                egt.extendTyped(ev.key);
+                break;
+            case egt.consts.states.LOOKING:
+                // todo
+                egt.highlightBufferMatches(egt.state.buffer);
+                break;
         }
     }
 
     console.log(egt.state.buffer);
 }
 
-const preventedKeys = [egt.consts.keys.Space, egt.consts.keys.Backspace, egt.consts.keys.Delete];
-let preventKeyState = true;
+const preventedKeys = [
+    egt.consts.keys.Enter,
+    egt.consts.keys.Space,
+    egt.consts.keys.Backspace, 
+    egt.consts.keys.Delete,
+    egt.consts.keys.F2,
+];
 function keypressPreventDefault(ev) {
-    if (ev.code === egt.consts.keys.F10) {
+    if (ev.code === egt.consts.keys.F2) {
+        ev.preventDefault;
+        return;
+    }
+    if (egt.state.mode !== egt.consts.states.OFF && preventedKeys.includes(ev.code)) {
         ev.preventDefault();
-        preventKeyState = !preventKeyState;
-        return true;
     }
-    if (preventKeyState && preventedKeys.includes(ev.code)) {
-        ev.preventDefault();
-    }
-    return false;
-}
-
-function highlightBufferMatches(buffer) {
-    let elements;
-    if (buffer.length > 4) {
-        elements = egt.xpathStringSearch(buffer);
-    } else {
-        elements = [];
-    }
-
-    for (let el of egt.state.coloredElements) {
-        if (!elements.includes(el)) {
-            el.classList.remove(egt.consts.class.HIGHLIGHT);
-        }
-    }
-    for (let el of elements) {
-        el.classList.add(egt.consts.class.HIGHLIGHT);
-    }
-    egt.state.coloredElements = elements;
 }

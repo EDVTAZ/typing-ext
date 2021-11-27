@@ -33,6 +33,7 @@
         "content_scripts/xpath.js",
         "content_scripts/utils.js",
         "content_scripts/hud.js",
+        "content_scripts/looking.js",
         "content_scripts/main.js"
       ]
    },

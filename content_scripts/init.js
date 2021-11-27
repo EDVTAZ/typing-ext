@@ -30,19 +30,20 @@ const consts = {
         Space: 'Space',
         Delete: 'Delete',
         Enter: 'Enter',
-        F10: 'F10',
+        F2: 'F2',
     },
 }
 
 globalThis.typext = {
     consts,
-    state: initState(),
+    state: initState(consts.states.OFF),
     history: [],
 };
 
-function initState() {
+function initState(mode) {
     return {
-        mode: consts.states.LOOKING,
+        mode: mode,
+        prevmode: consts.states.LOOKING,
         cursor: null,
         cursorChain: [],
         wrongCharCount: 0,

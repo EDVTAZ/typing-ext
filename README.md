@@ -1,5 +1,4 @@
 # TODO
-* three states (off, looking, locked)
 * jump between buffers
 * scroll into view
 * HUD interface

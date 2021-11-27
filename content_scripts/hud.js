@@ -6,7 +6,7 @@ function buildHUD() {
 
     const styleElem = addStyle(hudShadowRoot);
     const hudRoot = addRoot(hudShadowRoot);
-    //hudRoot.style.display = 'none';
+    hudRoot.style.display = 'none';
 
     const hud = {
         hudAnchor,
@@ -79,5 +79,15 @@ function addStyle(elem) {
     return styleElem;
 }
 
+function showHUD() {
+    egt.hud.hudRoot.style.display = 'block';
+}
+
+function hideHUD() {
+    egt.hud.hudRoot.style.display = 'none';
+}
+
 buildHUD()
+egt.showHUD = showHUD;
+egt.hideHUD = hideHUD;
 egt.addContainer = addContainer;

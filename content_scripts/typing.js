@@ -141,9 +141,8 @@ function backspaceDel() {
 }
 
 function unlockState() {
-    egt.state.mode = egt.consts.states.LOOKING;
     egt.history.push(egt.state);
-    egt.state = egt.initState();
+    egt.state = egt.initState(egt.consts.states.LOOKING);
 }
 
 

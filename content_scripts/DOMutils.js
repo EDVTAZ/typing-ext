@@ -1,7 +1,7 @@
 "use strict";
 
 function repack(element) {
-    if (element.classList.contains(egt.consts.NAMESPACE)) {
+    if (element.classList.contains(egt.consts.class.NAMESPACE)) {
         return;
     }
     let cNodes = element.childNodes;
@@ -9,7 +9,7 @@ function repack(element) {
         let node = cNodes[i];
         if (node.nodeType === Node.TEXT_NODE) {
             const span = document.createElement("span");
-            span.className = egt.consts.NAMESPACE;
+            span.className = egt.consts.class.NAMESPACE;
             element.insertBefore(span, node);
             span.appendChild(node);
         }
@@ -37,7 +37,7 @@ function getNextElementWithText(el, step) {
 
 function getNEWTstephelper(el) {
     repack(el);
-    if (el.classList.contains(egt.consts.NAMESPACE) && el.children.length === 0) {
+    if (el.classList.contains(egt.consts.class.NAMESPACE) && el.children.length === 0) {
         return el;
     } else {
         return getNextElementWithText(el.children[0], false);
@@ -49,9 +49,9 @@ function splitElement(el, pos) {
     let right = document.createElement('span');
 
     left.innerText = el.innerText.slice(0, pos);
-    left.className = egt.consts.NAMESPACE;
+    left.className = egt.consts.class.NAMESPACE;
     right.innerText = el.innerText.slice(pos);
-    right.className = egt.consts.NAMESPACE;
+    right.className = egt.consts.class.NAMESPACE;
 
     el.innerText = '';
     el.appendChild(left);

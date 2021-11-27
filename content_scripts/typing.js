@@ -25,7 +25,7 @@ function shrinkTyped() {
     if (egt.state.cursor.innerText.length > 0) {
         if (egt.state.cursor.nextElementSibling) {
             let nextEl = egt.state.cursor.nextElementSibling;
-            if (nextEl.classList.contains(egt.consts.NAMESPACE) && nextEl.children.length == 0) {
+            if (nextEl.classList.contains(egt.consts.class.NAMESPACE) && nextEl.children.length == 0) {
                 let left = egt.state.cursor.innerText.slice(0, -1);;
                 let right = egt.state.cursor.innerText.at(-1) + nextEl.innerText;
 
@@ -35,15 +35,15 @@ function shrinkTyped() {
             }
         }
         if (egt.state.cursor.innerText.length === 1) {
-            egt.state.cursor.classList.remove(egt.consts.TYPED);
+            egt.state.cursor.classList.remove(egt.consts.class.TYPED);
             egt.state.cursorChain.pop();
             egt.state.cursor = egt.state.cursorChain.at(-1);
             return;
         }
-        egt.state.cursor.classList.remove(egt.consts.TYPED);
+        egt.state.cursor.classList.remove(egt.consts.class.TYPED);
         let _;
         [egt.state.cursor, _] = egt.splitElement(egt.state.cursor, -1);
-        egt.state.cursor.classList.add(egt.consts.TYPED);
+        egt.state.cursor.classList.add(egt.consts.class.TYPED);
         egt.state.cursorChain.pop();
         egt.state.cursorChain.push(egt.state.cursor);
     } else {
@@ -97,18 +97,18 @@ function lockElement(el, pos, len) {
     }
 
     if (len === el.innerText.length) {
-        el.classList.add(egt.consts.TYPED);
+        el.classList.add(egt.consts.class.TYPED);
         egt.state.cursor = el;
         egt.state.cursorChain.push(egt.state.cursor);
     }
     else if (len < el.innerText.length) {
         let [left, _]  = egt.splitElement(el, len);
-        left.classList.add(egt.consts.TYPED);
+        left.classList.add(egt.consts.class.TYPED);
         egt.state.cursor = left;
         egt.state.cursorChain.push(egt.state.cursor);
     }
     else if (len > el.innerText.length) {
-        el.classList.add(egt.consts.TYPED);
+        el.classList.add(egt.consts.class.TYPED);
         egt.state.cursorChain.push(el);
         lockElement(egt.getNextElementWithText(el, true), 0, len-el.innerText.length);
     }

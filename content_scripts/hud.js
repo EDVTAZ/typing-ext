@@ -15,8 +15,8 @@ function buildHUD() {
         containers: [],
     };
 
-    addContainer(hud, 'typext-hud-dominant');
-    addContainer(hud, 'typext-hud-weak');
+    addContainer(hud, egt.consts.class.DOMINANT);
+    addContainer(hud, egt.consts.class.WEAK);
 
     egt.hud = hud;
     return hud;
@@ -25,30 +25,30 @@ function buildHUD() {
 function addContainer(hud, typeClass) {
     const elem = hud.hudRoot;
     const hudContainer = document.createElement('box');
-    hudContainer.classList.add('typext-hud-container');
+    hudContainer.classList.add(egt.consts.class.CONTAINER);
     hudContainer.classList.add(typeClass);
     elem.prepend(hudContainer);
 
     const hudLeft = document.createElement('box');
-    hudLeft.classList.add('typext-hud-textbox');
-    hudLeft.classList.add('typext-hud-textleft');
+    hudLeft.classList.add(egt.consts.class.TEXTBOX);
+    hudLeft.classList.add(egt.consts.class.TEXTLEFT);
     hudContainer.appendChild(hudLeft);
 
     const typedText = document.createElement('span');
-    typedText.classList.add('typext-hud-typedtext');
+    typedText.classList.add(egt.consts.class.HUD_TYPED);
     hudLeft.appendChild(typedText);
 
     const hudRight = document.createElement('box');
-    hudRight.classList.add('typext-hud-textbox');
-    hudRight.classList.add('typext-hud-textright');
+    hudRight.classList.add(egt.consts.class.TEXTBOX);
+    hudRight.classList.add(egt.consts.class.TEXTRIGHT);
     hudContainer.appendChild(hudRight);
 
     const wrongText = document.createElement('span');
-    wrongText.classList.add('typext-hud-wrongtext');
+    wrongText.classList.add(egt.consts.class.HUD_WRONG);
     hudRight.appendChild(wrongText);
 
     const untypedText = document.createElement('span');
-    untypedText.classList.add('typext-hud-untyped');
+    untypedText.classList.add(egt.consts.class.HUD_UNTYPED);
     hudRight.appendChild(untypedText);
 
     const container = {
@@ -80,4 +80,4 @@ function addStyle(elem) {
 }
 
 buildHUD()
-egt.buildHUD = buildHUD;
+egt.addContainer = addContainer;

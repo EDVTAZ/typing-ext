@@ -75,11 +75,11 @@ function highlightBufferMatches(buffer) {
 
     for (let el of egt.state.coloredElements) {
         if (!elements.includes(el)) {
-            el.classList.remove(egt.consts.HIGHLIGHT);
+            el.classList.remove(egt.consts.class.HIGHLIGHT);
         }
     }
     for (let el of elements) {
-        el.classList.add(egt.consts.HIGHLIGHT);
+        el.classList.add(egt.consts.class.HIGHLIGHT);
     }
     egt.state.coloredElements = elements;
 }

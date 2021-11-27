@@ -21,20 +21,21 @@
   width: 60vw;
   height: auto;
   position: fixed;
-  bottom: 20vh;
+  bottom: 10vh;
   left: 50vw;
-  transform: translate(-50%,100%);
+  transform: translate(-50%,0%);
   opacity: 0.9;
-  border-left: solid black 2px;
-  border-right: solid black 2px;
-  border-top: solid black 2px;
 }
 
 .typext-hud-container {
+  margin: 3px;
   height: 50px;
   font-size: 180%;
   width: 100%;
   border-bottom: solid black 2px;
+  border-left: solid black 2px;
+  border-right: solid black 2px;
+  border-top: solid black 2px;
   display: flex;
 }
 
@@ -53,6 +54,7 @@
 
 .typext-hud-textright {
   justify-content: left;
+  color: white;
 }
 
 .typext-hud-dominant {
@@ -63,4 +65,8 @@
 .typext-hud-weak {
   color: #ffa600;
   background-color: #847ead;
+}
+
+.typext-hud-wrongtext {
+  color: red;
 }

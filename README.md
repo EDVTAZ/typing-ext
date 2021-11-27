@@ -6,4 +6,5 @@
 * handle iframes and shadow roots
 * handle no next element
 * colors...
-* iframe -> shadow root
+* fix xpath escaping 
+* fix space trimming if necessary

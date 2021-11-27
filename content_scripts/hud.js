@@ -1,42 +1,82 @@
 function buildHUD() {
-    /*
-    let ifram = document.createElement('iframe');
-    ifram.src = chrome.runtime.getURL('content_html/hud.html');
-    ifram.className = 'typext-hud-frame';
-    document.body.appendChild(ifram);
-    */
 
-    let hudBody = document.body;
     let hudAnchor = document.createElement('div');
-    hudBody.appendChild(hudAnchor);
-    let hudShadow = hudAnchor.attachShadow({mode: 'open'});
+    document.body.appendChild(hudAnchor);
+    let hudShadowRoot = hudAnchor.attachShadow({mode: 'open'});
 
-    // Apply external styles to the shadow dom
-    const styleElem = document.createElement('link');
-    styleElem.setAttribute('rel', 'stylesheet');
-    styleElem.setAttribute('href', chrome.runtime.getURL('content_styles/content.css'));
-    hudShadow.appendChild(styleElem);
+    const styleElem = addStyle(hudShadowRoot);
+    const hudRoot = addRoot(hudShadowRoot);
+    //hudRoot.style.display = 'none';
 
-    const hudRoot = document.createElement('box');
-    hudRoot.className = 'typext-hud-frame';
-    hudShadow.appendChild(hudRoot);
+    const hud = {
+        hudAnchor,
+        hudShadowRoot,
+        hudRoot,
+        containers: [],
+    };
 
+    addContainer(hud, 'typext-hud-dominant');
+    addContainer(hud, 'typext-hud-weak');
+
+    egt.hud = hud;
+    return hud;
+}
+
+function addContainer(hud, typeClass) {
+    const elem = hud.hudRoot;
     const hudContainer = document.createElement('box');
     hudContainer.classList.add('typext-hud-container');
-    hudContainer.classList.add('typext-hud-dominant');
-    hudRoot.appendChild(hudContainer);
+    hudContainer.classList.add(typeClass);
+    elem.prepend(hudContainer);
 
     const hudLeft = document.createElement('box');
     hudLeft.classList.add('typext-hud-textbox');
     hudLeft.classList.add('typext-hud-textleft');
-    hudLeft.textContent = 'qqqqqq';
     hudContainer.appendChild(hudLeft);
+
+    const typedText = document.createElement('span');
+    typedText.classList.add('typext-hud-typedtext');
+    hudLeft.appendChild(typedText);
 
     const hudRight = document.createElement('box');
     hudRight.classList.add('typext-hud-textbox');
     hudRight.classList.add('typext-hud-textright');
-    hudRight.textContent = 'caa';
     hudContainer.appendChild(hudRight);
+
+    const wrongText = document.createElement('span');
+    wrongText.classList.add('typext-hud-wrongtext');
+    hudRight.appendChild(wrongText);
+
+    const untypedText = document.createElement('span');
+    untypedText.classList.add('typext-hud-untyped');
+    hudRight.appendChild(untypedText);
+
+    const container = {
+        hudContainer,
+        hudLeft,
+        hudRight,
+        typedText,
+        wrongText,
+        untypedText,
+    };
+
+    hud.containers.push(container);
+    return container;
+}
+
+function addRoot(elem) {
+    const hudRoot = document.createElement('box');
+    hudRoot.className = 'typext-hud-frame';
+    elem.appendChild(hudRoot);
+    return hudRoot;
+}
+
+function addStyle(elem) {
+    const styleElem = document.createElement('link');
+    styleElem.setAttribute('rel', 'stylesheet');
+    styleElem.setAttribute('href', chrome.runtime.getURL('content_styles/content.css'));
+    elem.appendChild(styleElem);
+    return styleElem;
 }
 
 buildHUD()

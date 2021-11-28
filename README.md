@@ -8,3 +8,4 @@
 * fix space trimming if necessary
 * allow looking for identical matches inside the same element (hud)
 * handle typing near the end of document
+* HUD: word by word progression

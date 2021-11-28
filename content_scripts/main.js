@@ -23,6 +23,7 @@ function handleKeyEvent(ev) {
             egt.state.mode = egt.consts.states.OFF;
             egt.hideHUD();
             break;
+
         case egt.consts.keys.Backspace:
             if (egt.state.mode === egt.consts.states.LOCKED) {
                 egt.backspaceDel();
@@ -33,6 +34,7 @@ function handleKeyEvent(ev) {
                 }
             }
             break;
+
         case egt.consts.keys.Delete:
             if (egt.state.mode === egt.consts.states.LOCKED) {
                 egt.visualEmptyBuffer();
@@ -41,10 +43,18 @@ function handleKeyEvent(ev) {
                 egt.state.mode.buffer = '';
             }
             break;
+
+        case egt.consts.keys.Tab:
+            if (egt.state.mode === egt.consts.states.LOOKING) {
+                egt.cycleFocusedLooking();
+            }
+            break;
+
         case egt.consts.keys.Enter:
             if (egt.state.mode === egt.consts.states.LOOKING) {
-                egt.lockState(egt.state.buffer);
-                egt.highlightBufferMatches('');
+                const fe = egt.state.focusedElement;
+                egt.showBufferMatches('');
+                egt.lockState(egt.state.buffer, fe);
             }
             else if (egt.state.mode === egt.consts.states.LOCKED) {
                 egt.unlockState();
@@ -53,15 +63,12 @@ function handleKeyEvent(ev) {
     
     if (ev.key.length === 1) {
         egt.state.buffer += ev.key;
-        switch (egt.state.mode) {
-            case egt.consts.states.LOCKED:
-                egt.extendTyped(ev.key);
-                break;
-            case egt.consts.states.LOOKING:
-                // todo
-                egt.highlightBufferMatches(egt.state.buffer);
-                break;
+        if (egt.state.mode === egt.consts.states.LOCKED) {
+            egt.extendTyped(ev.key);
         }
+    }
+    if (egt.state.mode === egt.consts.states.LOOKING) {
+        egt.showBufferMatches(egt.state.buffer);
     }
 
     console.log(egt.state.buffer);
@@ -69,6 +76,7 @@ function handleKeyEvent(ev) {
 
 const preventedKeys = [
     egt.consts.keys.Enter,
+    egt.consts.keys.Tab,
     egt.consts.keys.Space,
     egt.consts.keys.Backspace, 
     egt.consts.keys.Delete,

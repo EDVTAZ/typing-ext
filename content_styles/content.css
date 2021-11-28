@@ -54,19 +54,36 @@
 
 .typext-hud-textright {
   justify-content: left;
-  color: white;
+  border-left: solid black 1px;
 }
 
 .typext-hud-dominant {
-  color: #ffa600;
   background-color: #58508d;
 }
 
 .typext-hud-weak {
-  color: #ffa600;
   background-color: #847ead;
+}
+
+.typext-hud-overflowed {
+  background-color: #bcb8d6;
+  height: 20px;
 }
 
 .typext-hud-wrongtext {
   color: red;
+}
+
+.typext-hud-untyped {
+  color: white;
+}
+
+.typext-hud-typedtext {
+  color: #ffa600;
+}
+
+.typext-hud-wspreserver {
+  display: inline-block;
+  width: 0px;
+  opacity: 0;
 }

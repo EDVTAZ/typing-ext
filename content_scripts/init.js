@@ -1,6 +1,8 @@
 "use strict";
 
 const consts = {
+    WILDCARD_CHAR: '.',
+    HUD_HEIGHT: 4,
     class: {
         TYPED: 'typext-typed',
         NAMESPACE: 'typext-namespace',
@@ -12,13 +14,12 @@ const consts = {
         TEXTRIGHT: 'typext-hud-textright',
         DOMINANT: 'typext-hud-dominant',
         WEAK: 'typext-hud-weak',
-        WRONGTEXT: 'typext-hud-wrongtext',
+        OVERFLOWED: 'typext-hud-overflowed',
         HUD_TYPED: 'typext-hud-typedtext',
         HUD_WRONG: 'typext-hud-wrongtext',
         HUD_UNTYPED: 'typext-hud-untyped',
-
+        HUD_WSPRESERVE: 'typext-hud-wspreserver',
     },
-    WILDCARD_CHAR: '.',
     states: {
         OFF: 'OFF',
         LOOKING: 'LOOKING',
@@ -30,6 +31,7 @@ const consts = {
         Space: 'Space',
         Delete: 'Delete',
         Enter: 'Enter',
+        Tab: 'Tab',
         F2: 'F2',
     },
 }
@@ -48,6 +50,7 @@ function initState(mode) {
         cursorChain: [],
         wrongCharCount: 0,
         buffer: '',
+        lookAhead: '',
         coloredElements: [],
     }
 }

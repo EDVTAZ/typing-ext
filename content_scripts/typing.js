@@ -4,9 +4,11 @@ function extendTyped(newChar) {
     let nextEl = egt.getNextElementWithText(egt.state.cursor, true);
     if (newChar === egt.consts.WILDCARD_CHAR) {
         newChar = nextEl.innerText[0];
+        egt.state.buffer = egt.state.buffer.slice(0, -1) + newChar;
     }
     if (egt.state.wrongCharCount > 0 || nextEl.innerText[0] !== newChar) {
         egt.state.wrongCharCount += 1;
+        wrongcharTypingHUD();
         return;
     }
 
@@ -18,6 +20,39 @@ function extendTyped(newChar) {
         nextEl.innerText = right;
     } else {
         lockElement(nextEl, 0, 1);
+    }
+    
+    extendTypingHUD();
+}
+
+function wrongcharTypingHUD() {
+    egt.setHUDContent(0,
+        null,
+        egt.state.buffer.slice(0, egt.state.buffer.length-egt.state.wrongCharCount),
+        egt.state.lookAhead.slice(0, egt.state.wrongCharCount),
+        egt.state.lookAhead.slice(egt.state.wrongCharCount),
+    );
+}
+
+function extendTypingHUD() {
+    egt.state.lookAhead = egt.state.lookAhead.slice(1);
+    updateLookAhead();
+    egt.setHUDContent(0,
+        null,
+        egt.state.buffer,
+        '',
+        egt.state.lookAhead,
+    );
+}
+
+function updateLookAhead() {
+    if (egt.state.lookAhead.length < 30) {
+        egt.state.lookAhead = '';
+        let nextEl = egt.getNextElementWithText(egt.state.cursor, true);
+        while (egt.state.lookAhead.length < 90) {
+            egt.state.lookAhead += nextEl.innerText;
+            nextEl = egt.getNextElementWithText(nextEl, true);
+        }
     }
 }
 
@@ -54,8 +89,7 @@ function shrinkTyped() {
     }
 }
 
-function lockState(buffer) {
-    let focusedElement = egt.xpathStringSearch(buffer)?.[0];
+function lockState(buffer, focusedElement) {
     if (!focusedElement) {
         return
     }
@@ -83,6 +117,14 @@ function lockState(buffer) {
     console.log({startPosition});
 
     lockElement(focusedElement, startPosition, buffer.length);
+
+    egt.state.lookAhead = '';
+    egt.setHUDContent(0,
+        focusedElement.innerText.slice(0, startPosition),
+        buffer,
+        '',
+        focusedElement.innerText.slice(startPosition+buffer.length)
+    );
 }
 
 function lockElement(el, pos, len) {
@@ -130,9 +172,11 @@ async function visualEmptyBuffer() {
 
 function backspaceDel() {
     if (egt.state.buffer.length > 0) {
+        backspaceTypingHUD();
         egt.state.buffer = egt.state.buffer.slice(0, egt.state.buffer.length-1);
         if (egt.state.wrongCharCount > 0) {
             egt.state.wrongCharCount--;
+            wrongcharTypingHUD();
         }
         else {
             shrinkTyped();
@@ -140,9 +184,23 @@ function backspaceDel() {
     }
 }
 
+function backspaceTypingHUD() {
+    if (egt.state.wrongCharCount > 0) {
+        return;
+    }
+    egt.state.lookAhead = egt.state.buffer.slice(-1) + egt.state.lookAhead;
+    egt.setHUDContent(0,
+        null,
+        egt.state.buffer.slice(0, -1),
+        '',
+        egt.state.lookAhead,
+    );
+}
+
 function unlockState() {
     egt.history.push(egt.state);
     egt.state = egt.initState(egt.consts.states.LOOKING);
+    egt.setHUDContent(0, '','','','');
 }
 
 

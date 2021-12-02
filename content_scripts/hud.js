@@ -148,15 +148,20 @@ function setHUDHeight(height) {
     }
 }
 
+function setSanitizeInnerText(el, str) {
+    el.innerText = str.replaceAll('\n', '⏎');
+}
+
 function setHUDContent(idx, untypedLeft, typed, focusTyped, mistyped, focusUntyped, untypedRight) {
+    // TODO maybe optimize enter sanitization, it could be slow...
     if (untypedLeft !== null) {
-        egt.hud.containers[idx].untypedLeft.innerText = untypedLeft;
+        setSanitizeInnerText(egt.hud.containers[idx].untypedLeft, untypedLeft);
     }
-    egt.hud.containers[idx].typedText.innerText = typed;
-    egt.hud.containers[idx].focusTyped.innerText = focusTyped;
-    egt.hud.containers[idx].wrongText.innerText = mistyped;
-    egt.hud.containers[idx].focusUntyped.innerText = focusUntyped;
-    egt.hud.containers[idx].untypedText.innerText = untypedRight;
+    setSanitizeInnerText(egt.hud.containers[idx].typedText, typed);
+    setSanitizeInnerText(egt.hud.containers[idx].focusTyped, focusTyped);
+    setSanitizeInnerText(egt.hud.containers[idx].wrongText, mistyped);
+    setSanitizeInnerText(egt.hud.containers[idx].focusUntyped, focusUntyped);
+    setSanitizeInnerText(egt.hud.containers[idx].untypedText, untypedRight);
 }
 
 function setHUDTypingContent(idx, untypedLeft, typed, mistyped, untypedRight) {

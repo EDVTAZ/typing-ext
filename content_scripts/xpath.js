@@ -10,7 +10,7 @@ function xpathStringSearch(query) {
 
     let escapedQuery;
     if (query.includes("'")) {
-        escapedQuery = `concat('${query.replace("'", "', \"'\", '")}')`;
+        escapedQuery = `concat('${query.replaceAll("'", "', \"'\", '")}')`;
     } else {
         escapedQuery = `'${query}'`;
     }

@@ -3,6 +3,11 @@
 const consts = {
     WILDCARD_CHAR: '.',
     HUD_HEIGHT: 4,
+    SCROLL_OPT: {
+        behavior: "smooth",
+        block: "center", 
+        inline: "nearest",
+    },
     class: {
         TYPED: 'typext-typed',
         NAMESPACE: 'typext-namespace',

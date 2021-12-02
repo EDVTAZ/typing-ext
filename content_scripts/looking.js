@@ -52,7 +52,7 @@ function updateLookingHUD(state) {
             elText.slice(textpos+state.buffer.length)
         );
     }
-    egt.state.focusedElement?.scrollIntoView();
+    egt.state.focusedElement?.scrollIntoView(egt.consts.SCROLL_OPT);
 }
 
 function cycleFocusedLooking() {

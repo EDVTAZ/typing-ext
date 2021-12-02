@@ -40,7 +40,7 @@ function handleKeyEvent(ev) {
                 egt.visualEmptyBuffer();
             }
             else if (egt.state.mode === egt.consts.states.LOOKING) {
-                egt.state.mode.buffer = '';
+                egt.state.buffer = '';
             }
             break;
 

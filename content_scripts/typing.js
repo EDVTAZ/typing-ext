@@ -23,6 +23,7 @@ function extendTyped(newChar) {
     }
     
     extendTypingHUD();
+    egt.state.cursor?.scrollIntoView(egt.consts.SCROLL_OPT);
 }
 
 function wrongcharTypingHUD() {
@@ -180,6 +181,7 @@ function backspaceDel() {
         }
         else {
             shrinkTyped();
+            egt.state.cursor?.scrollIntoView(egt.consts.SCROLL_OPT);
         }
     }
 }
@@ -206,7 +208,6 @@ function unlockState() {
 
 
 egt.extendTyped = extendTyped;
-egt.shrinkTyped = shrinkTyped;
 egt.lockState = lockState;
 egt.unlockState = unlockState;
 egt.visualEmptyBuffer = visualEmptyBuffer;

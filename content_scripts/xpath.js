@@ -8,8 +8,13 @@ function xpathStringSearch(query) {
         return [...prevResult];
     }
 
-    let escapedQuery = query.replace("'", "\\'");
-    escapedQuery = `.//*[contains(., '${escapedQuery}')]`;
+    let escapedQuery;
+    if (query.includes("'")) {
+        escapedQuery = `concat('${query.replace("'", "', \"'\", '")}')`;
+    } else {
+        escapedQuery = `'${query}'`;
+    }
+    escapedQuery = `.//*[contains(., ${escapedQuery})]`;
     let results = xpath(escapedQuery, document);
 
     let validResults = [];

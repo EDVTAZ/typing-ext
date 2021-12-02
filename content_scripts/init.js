@@ -16,9 +16,11 @@ const consts = {
         WEAK: 'typext-hud-weak',
         OVERFLOWED: 'typext-hud-overflowed',
         HUD_TYPED: 'typext-hud-typedtext',
+        HUD_TYPEDFOCUS: 'typext-hud-focustypedtext',
         HUD_WRONG: 'typext-hud-wrongtext',
         HUD_UNTYPED: 'typext-hud-untyped',
         HUD_WSPRESERVE: 'typext-hud-wspreserver',
+        HUD_FOCUS: 'typext-hud-focusword',
     },
     states: {
         OFF: 'OFF',

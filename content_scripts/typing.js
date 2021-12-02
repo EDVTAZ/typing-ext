@@ -26,7 +26,7 @@ function extendTyped(newChar) {
 }
 
 function wrongcharTypingHUD() {
-    egt.setHUDContent(0,
+    egt.setHUDTypingContent(0,
         null,
         egt.state.buffer.slice(0, egt.state.buffer.length-egt.state.wrongCharCount),
         egt.state.lookAhead.slice(0, egt.state.wrongCharCount),
@@ -37,7 +37,7 @@ function wrongcharTypingHUD() {
 function extendTypingHUD() {
     egt.state.lookAhead = egt.state.lookAhead.slice(1);
     updateLookAhead();
-    egt.setHUDContent(0,
+    egt.setHUDTypingContent(0,
         null,
         egt.state.buffer,
         '',
@@ -119,7 +119,7 @@ function lockState(buffer, focusedElement) {
     lockElement(focusedElement, startPosition, buffer.length);
 
     egt.state.lookAhead = '';
-    egt.setHUDContent(0,
+    egt.setHUDTypingContent(0,
         focusedElement.innerText.slice(0, startPosition),
         buffer,
         '',
@@ -188,8 +188,9 @@ function backspaceTypingHUD() {
     if (egt.state.wrongCharCount > 0) {
         return;
     }
+    
     egt.state.lookAhead = egt.state.buffer.slice(-1) + egt.state.lookAhead;
-    egt.setHUDContent(0,
+    egt.setHUDTypingContent(0,
         null,
         egt.state.buffer.slice(0, -1),
         '',
@@ -200,7 +201,7 @@ function backspaceTypingHUD() {
 function unlockState() {
     egt.history.push(egt.state);
     egt.state = egt.initState(egt.consts.states.LOOKING);
-    egt.setHUDContent(0, '','','','');
+    egt.setHUDContent(0, '','','','','','');
 }
 
 

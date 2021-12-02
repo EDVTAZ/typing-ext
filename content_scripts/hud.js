@@ -64,9 +64,17 @@ function addContainer(hud, typeClass) {
           rightWsPreserve.innerText = '_';
           rightSpan.appendChild(rightWsPreserve);
   
+          const focusTyped = document.createElement('span');
+          focusTyped.classList.add(egt.consts.class.HUD_TYPEDFOCUS);
+          rightSpan.appendChild(focusTyped);   
+
           const wrongText = document.createElement('span');
           wrongText.classList.add(egt.consts.class.HUD_WRONG);
           rightSpan.appendChild(wrongText);
+  
+          const focusUntyped = document.createElement('span');
+          focusUntyped.classList.add(egt.consts.class.HUD_FOCUS);
+          rightSpan.appendChild(focusUntyped); 
     
           const untypedText = document.createElement('span');
           untypedText.classList.add(egt.consts.class.HUD_UNTYPED);
@@ -78,7 +86,9 @@ function addContainer(hud, typeClass) {
         hudRight,
         untypedLeft,
         typedText,
+        focusTyped,
         wrongText,
+        focusUntyped,
         untypedText,
     };
 
@@ -138,13 +148,50 @@ function setHUDHeight(height) {
     }
 }
 
-function setHUDContent(idx, untypedLeft, typed, mistyped, untypedRight) {
+function setHUDContent(idx, untypedLeft, typed, focusTyped, mistyped, focusUntyped, untypedRight) {
     if (untypedLeft !== null) {
         egt.hud.containers[idx].untypedLeft.innerText = untypedLeft;
     }
     egt.hud.containers[idx].typedText.innerText = typed;
+    egt.hud.containers[idx].focusTyped.innerText = focusTyped;
     egt.hud.containers[idx].wrongText.innerText = mistyped;
+    egt.hud.containers[idx].focusUntyped.innerText = focusUntyped;
     egt.hud.containers[idx].untypedText.innerText = untypedRight;
+}
+
+function setHUDTypingContent(idx, untypedLeft, typed, mistyped, untypedRight) {
+    let focusTyped;
+    let focusUntyped;
+
+    const spaceRegex = /\s/g;
+    let untypedSpacePos = untypedRight.search(spaceRegex);
+    let mistypedSpacePos = mistyped.search(spaceRegex);
+
+    let typedSpacePos = -1;
+    spaceRegex.test(typed);
+    while (spaceRegex.lastIndex > 0) {
+        typedSpacePos = spaceRegex.lastIndex;
+        spaceRegex.test(typed);
+    }
+
+    if (typedSpacePos === -1) {
+        typedSpacePos = 0;
+    }
+    focusTyped = typed.slice(typedSpacePos);
+    typed = typed.slice(0, typedSpacePos);
+
+    if (mistypedSpacePos !== -1) {
+        focusUntyped = '';
+    } else {
+        if (untypedSpacePos === -1) {
+            focusUntyped = untypedRight;
+            untypedRight = '';
+        } else {
+            focusUntyped = untypedRight.slice(0, untypedSpacePos+1);
+            untypedRight = untypedRight.slice(untypedSpacePos+1);
+        }
+    }
+    setHUDContent(idx, untypedLeft, typed, focusTyped, mistyped, focusUntyped, untypedRight);
 }
 
 buildHUD()
@@ -153,3 +200,4 @@ egt.hideHUD = hideHUD;
 egt.addContainer = addContainer;
 egt.setHUDHeight = setHUDHeight;
 egt.setHUDContent = setHUDContent;
+egt.setHUDTypingContent = setHUDTypingContent;

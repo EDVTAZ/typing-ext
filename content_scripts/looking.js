@@ -30,7 +30,7 @@ function updateLookingHUD(state) {
         if (state.coloredElements.length === 0) {
             state.focusedElement = null;
             egt.setHUDHeight(1);
-            egt.setHUDContent(0, '', state.buffer, '', '');
+            egt.setHUDContent(0, '', state.buffer, '', '', '', '');
             return;
         }
 
@@ -48,7 +48,7 @@ function updateLookingHUD(state) {
         egt.setHUDContent(i-idx,
             elText.slice(0, textpos),
             state.buffer,
-            '',
+            '', '', '',
             elText.slice(textpos+state.buffer.length)
         );
     }

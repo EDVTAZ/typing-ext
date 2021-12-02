@@ -72,6 +72,7 @@
 
 .typext-hud-wrongtext {
   color: red;
+  background-color: white;
 }
 
 .typext-hud-untyped {
@@ -80,6 +81,16 @@
 
 .typext-hud-typedtext {
   color: #ffa600;
+}
+
+.typext-hud-focustypedtext {
+  color: #ffa600;
+  background-color: black;
+}
+
+.typext-hud-focusword {
+  color: #62d7f5;
+  background-color: grey;
 }
 
 .typext-hud-wspreserver {

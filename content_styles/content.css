@@ -1,20 +1,20 @@
 .typext-typed {
-  color: #ffa600;
-  background-color: #003f5c;
+  color: #daffc1;
+  background-color: #3a225c;
 }
 
 .typext-typed a {
-  color: #ffa600;
-  background-color: #003f5c;
+  color: #daffc1 !important;
+  background-color: #3a225c;
 }
 
 .typext-highlight {
-  background-color: #c9dcff;
+  background-color: #3a225c;  
 
 }
 
 .typext-highlight a {
-  background-color: #c9dcff;
+  background-color: #3a225c;
 }
 
 .typext-hud-frame {
@@ -58,21 +58,21 @@
 }
 
 .typext-hud-dominant {
-  background-color: #58508d;
+  background-color: #006099;
 }
 
 .typext-hud-weak {
-  background-color: #847ead;
+  background-color: #009ab4;
 }
 
 .typext-hud-overflowed {
-  background-color: #bcb8d6;
+  background-color: #69d0b8;
   height: 20px;
 }
 
 .typext-hud-wrongtext {
-  color: red;
-  background-color: white;
+  color: rgb(217, 255, 0);
+  background-color: rgb(197, 14, 14);
 }
 
 .typext-hud-untyped {
@@ -80,17 +80,17 @@
 }
 
 .typext-hud-typedtext {
-  color: #ffa600;
+  color: #90d8c7;
 }
 
 .typext-hud-focustypedtext {
-  color: #ffa600;
+  color: #daffc1;
   background-color: black;
 }
 
 .typext-hud-focusword {
-  color: #62d7f5;
-  background-color: grey;
+  color: #3a225c;
+  background-color: #69d0b8;
 }
 
 .typext-hud-wspreserver {

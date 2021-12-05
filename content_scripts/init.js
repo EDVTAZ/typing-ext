@@ -2,6 +2,11 @@
 
 const consts = {
     WILDCARD_CHAR: '.',
+    SYNONYM_CHARS: {
+        "'": "ʹʻʼʽˈ‘’",
+        '"': '“	”ʺ',
+        "-": "–—˗"
+    },
     HUD_HEIGHT: 4,
     SCROLL_OPT: {
         behavior: "smooth",

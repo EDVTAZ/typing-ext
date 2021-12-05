@@ -6,6 +6,10 @@ function extendTyped(newChar) {
         newChar = nextEl.innerText[0];
         egt.state.buffer = egt.state.buffer.slice(0, -1) + newChar;
     }
+    if (newChar in egt.consts.SYNONYM_CHARS &&
+        egt.consts.SYNONYM_CHARS[newChar].includes(nextEl.innerText[0])) {
+            newChar = nextEl.innerText[0];
+    }
     if (egt.state.wrongCharCount > 0 || nextEl.innerText[0] !== newChar) {
         egt.state.wrongCharCount += 1;
         wrongcharTypingHUD();

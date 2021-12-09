@@ -9,9 +9,13 @@ function repack(element) {
         let node = cNodes[i];
         if (node.nodeType === Node.TEXT_NODE) {
             const span = document.createElement("span");
-            span.className = egt.consts.class.NAMESPACE;
             element.insertBefore(span, node);
             span.appendChild(node);
+
+            if (span.children.length > 0) {
+                repack(span);
+            }
+            span.className = egt.consts.class.NAMESPACE;
         }
     }
 }
@@ -49,9 +53,9 @@ function splitElement(el, pos) {
     let right = document.createElement('span');
 
     left.innerText = el.innerText.slice(0, pos);
-    left.className = egt.consts.class.NAMESPACE;
+    repack(left);
     right.innerText = el.innerText.slice(pos);
-    right.className = egt.consts.class.NAMESPACE;
+    repack(right);
 
     el.innerText = '';
     el.appendChild(left);

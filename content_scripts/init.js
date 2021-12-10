@@ -7,6 +7,9 @@ const consts = {
         '"': '“	”ʺ',
         "-": "–—˗"
     },
+    SYNONYM_REGEX: {
+        " ": /[\s\u00A0]/,
+    },
     HUD_HEIGHT: 4,
     SCROLL_OPT: {
         behavior: "smooth",

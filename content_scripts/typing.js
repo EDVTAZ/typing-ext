@@ -2,14 +2,12 @@
 
 function extendTyped(newChar) {
     let nextEl = egt.getNextElementWithText(egt.state.cursor, true);
-    if (newChar === egt.consts.WILDCARD_CHAR) {
-        newChar = nextEl.innerText[0];
+    const origNewChar = newChar;
+    newChar = eqChar(origNewChar, nextEl.innerText[0]);
+    if (newChar !== origNewChar) {
         egt.state.buffer = egt.state.buffer.slice(0, -1) + newChar;
     }
-    if (newChar in egt.consts.SYNONYM_CHARS &&
-        egt.consts.SYNONYM_CHARS[newChar].includes(nextEl.innerText[0])) {
-            newChar = nextEl.innerText[0];
-    }
+    
     if (egt.state.wrongCharCount > 0 || nextEl.innerText[0] !== newChar) {
         egt.state.wrongCharCount += 1;
         wrongcharTypingHUD();
@@ -28,6 +26,21 @@ function extendTyped(newChar) {
     
     extendTypingHUD();
     egt.state.cursor?.scrollIntoView(egt.consts.SCROLL_OPT);
+}
+
+function eqChar(typed, real) {
+    if (
+        (typed === egt.consts.WILDCARD_CHAR) ||
+        (
+            typed in egt.consts.SYNONYM_CHARS &&
+            egt.consts.SYNONYM_CHARS[typed].includes(real)
+        ) ||
+        (
+            typed in egt.consts.SYNONYM_REGEX &&
+            egt.consts.SYNONYM_REGEX[typed].test(real)
+        )
+    ){  return real;  }
+    return typed;
 }
 
 function wrongcharTypingHUD() {

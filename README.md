@@ -4,6 +4,7 @@
 * colors...
 * fix space trimming if necessary
 * handle typing near the end of document
+* tab while typing autotypes till next space (or next char typed, like `f<search char>` in kakuone)
 * flash something when wrong char is entered
 ---
 * jump between buffers

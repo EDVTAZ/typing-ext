@@ -64,10 +64,10 @@ function extendTypingHUD() {
 }
 
 function updateLookAhead() {
-    if (egt.state.lookAhead.length < 30) {
+    if (egt.state.lookAhead.length < 60) {
         egt.state.lookAhead = '';
         let nextEl = egt.getNextElementWithText(egt.state.cursor, true);
-        while (egt.state.lookAhead.length < 90) {
+        while (egt.state.lookAhead.length < 120) {
             egt.state.lookAhead += nextEl.innerText;
             nextEl = egt.getNextElementWithText(nextEl, true);
         }

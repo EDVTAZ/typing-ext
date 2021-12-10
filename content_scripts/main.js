@@ -55,6 +55,9 @@ function handleKeyEvent(ev) {
                 const fe = egt.state.focusedElement;
                 egt.showBufferMatches('');
                 egt.lockState(egt.state.buffer, fe);
+                // hackily finish hud init, make it nicer later please :)
+                kickHUD();
+
             }
             else if (egt.state.mode === egt.consts.states.LOCKED) {
                 egt.unlockState();
@@ -90,4 +93,18 @@ function keypressPreventDefault(ev) {
     if (egt.state.mode !== egt.consts.states.OFF && preventedKeys.includes(ev.code)) {
         ev.preventDefault();
     }
+}
+
+// simulate keypress
+function kickHUD() {
+    handleKeyEvent({
+        code: egt.consts.WILDCARD_CHAR,
+        key: egt.consts.WILDCARD_CHAR,
+
+    })
+    handleKeyEvent({
+        code: egt.consts.keys.Backspace,
+        key: egt.consts.keys.Backspace,
+
+    })
 }

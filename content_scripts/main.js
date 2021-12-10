@@ -73,8 +73,6 @@ function handleKeyEvent(ev) {
     if (egt.state.mode === egt.consts.states.LOOKING) {
         egt.showBufferMatches(egt.state.buffer);
     }
-
-    console.log(egt.state.buffer);
 }
 
 const preventedKeys = [

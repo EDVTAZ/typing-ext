@@ -34,7 +34,6 @@ function xpathStringSearch(query) {
       console.trace(e);
     }
 
-    console.info(validResults);
     previousXpathStringSearch = [query, [...validResults]]
 
     return validResults;

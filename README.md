@@ -6,6 +6,8 @@
 * handle typing near the end of document
 * tab while typing autotypes till next space (or next char typed, like `f<search char>` in kakuone)
 * flash something when wrong char is entered
+* while typing escape to delete all wrongchar
+* fix leak/infinite loop
 ---
 * jump between buffers
 * allow looking for identical matches inside the same element (hud)

@@ -131,9 +131,6 @@ function lockState(buffer, focusedElement) {
         startPosition -= currentSum;
     }
 
-    console.log({focusedElement});
-    console.log({startPosition});
-
     lockElement(focusedElement, startPosition, buffer.length);
 
     egt.state.lookAhead = '';

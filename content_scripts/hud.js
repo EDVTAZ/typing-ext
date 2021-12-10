@@ -173,6 +173,9 @@ function setHUDTypingContent(idx, untypedLeft, typed, mistyped, untypedRight) {
     let mistypedSpacePos = mistyped.search(spaceRegex);
 
     let typedSpacePos = -1;
+    if (typed.length > 120) {
+        typed = typed.slice(-120);
+    }
     spaceRegex.test(typed);
     while (spaceRegex.lastIndex > 0) {
         typedSpacePos = spaceRegex.lastIndex;

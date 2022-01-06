@@ -1,11 +1,62 @@
 "use strict";
 
+class HUD {
+    /**
+     * @param {boolean} visible 
+     */
+    constructor(visible) {
+        this.#anchor = document.createElement('div');
+        document.body.appendChild(this.#anchor);
+        this.#shadowRoot = this.#anchor.attachShadow({mode: 'open'});
+        this.#addStyle(this.#shadowRoot);
+
+        this.#typedHUD = new TypedHUD(visible);
+    }
+
+    /** @type {Element} */
+    #anchor;
+    /** @type {ShadowRoot} */
+    #shadowRoot;
+    /** @type {TypedHUD} */
+    #typedHUD;
+
+    /**
+     * @param {ShadowRoot} elem 
+     * @returns {Element}
+     */
+    #addStyle(elem) {        
+        const styleElem = document.createElement('link');
+        styleElem.setAttribute('rel', 'stylesheet');
+        styleElem.setAttribute('href', chrome.runtime.getURL('content_styles/content.css'));
+        elem.appendChild(styleElem);
+        return styleElem;
+    }
+}
+
+class TypedHUD {
+    /**
+     * 
+     * @param {ShadowRoot} shadowRoot 
+     * @param {boolean} visible 
+     */
+    constructor(shadowRoot, visible) {
+        this.#root = this.#addRoot(shadowRoot);
+    }
+
+    /** @type {Element} */
+    #root;
+    /** @type {Element[]} */
+    #containers;
+}
+
 function buildHUD() {
     let hudAnchor = document.createElement('div');
     document.body.appendChild(hudAnchor);
     let hudShadowRoot = hudAnchor.attachShadow({mode: 'open'});
 
     const styleElem = addStyle(hudShadowRoot);
+
+
     const hudRoot = addRoot(hudShadowRoot);
     hudRoot.style.display = 'none';
 

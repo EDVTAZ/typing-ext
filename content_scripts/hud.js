@@ -7,7 +7,7 @@ class HUD {
     constructor(visible) {
         this.#anchor = document.createElement('div');
         document.body.appendChild(this.#anchor);
-        this.#shadowRoot = this.#anchor.attachShadow({mode: 'open'});
+        this.#shadowRoot = this.#anchor.attachShadow({ mode: 'open' });
         this.#addStyle(this.#shadowRoot);
 
         this.#typedHUD = new TypedHUD(visible);
@@ -24,7 +24,7 @@ class HUD {
      * @param {ShadowRoot} elem 
      * @returns {Element}
      */
-    #addStyle(elem) {        
+    #addStyle(elem) {
         const styleElem = document.createElement('link');
         styleElem.setAttribute('rel', 'stylesheet');
         styleElem.setAttribute('href', chrome.runtime.getURL('content_styles/content.css'));
@@ -40,19 +40,90 @@ class TypedHUD {
      * @param {boolean} visible 
      */
     constructor(shadowRoot, visible) {
-        this.#root = this.#addRoot(shadowRoot);
+        this.#addRoot(shadowRoot, visible);
     }
 
     /** @type {Element} */
     #root;
     /** @type {Element[]} */
     #containers;
+
+    /**
+     * 
+     * @param {ShadowRoot} shadowRoot
+     * @param {boolean} visible
+     */
+    #addRoot(shadowRoot, visible) {
+        const hudRoot = document.createElement('box');
+        hudRoot.className = 'typext-hud-frame';
+        hudRoot.style.display = visible ? 'block' : 'none';
+        shadowRoot.appendChild(hudRoot);
+        this.#root = hudRoot;
+    }
+}
+
+class HUDContainer {
+    constructor() {
+        this.#hudContainer = document.createElement('box');
+        this.#hudContainer.classList.add(egt.consts.class.CONTAINER);
+        this.#hudContainer.classList.add(typeClass);
+
+            this.#hudLeft = document.createElement('box');
+            this.#hudLeft.classList.add(egt.consts.class.TEXTBOX);
+            this.#hudLeft.classList.add(egt.consts.class.TEXTLEFT);
+            this.#hudContainer.appendChild(hudLeft);
+
+                const leftSpan = document.createElement('span');
+                this.#hudLeft.appendChild(leftSpan);
+
+                    this.#untypedLeft = document.createElement('span');
+                    this.#untypedLeft.classList.add(egt.consts.class.HUD_UNTYPED);
+                    leftSpan.appendChild(this.#untypedLeft);
+
+                        this.#typedText = document.createElement('span');
+                        this.#typedText.classList.add(egt.consts.class.HUD_TYPED);
+                        leftSpan.appendChild(this.#typedText);
+
+                        const leftWsPreserve = document.createElement('span');
+                        leftWsPreserve.classList.add(egt.consts.class.HUD_WSPRESERVE);
+                        leftWsPreserve.innerText = '_';
+                        leftSpan.appendChild(leftWsPreserve);
+
+                this.#hudRight = document.createElement('box');
+                this.#hudRight.classList.add(egt.consts.class.TEXTBOX);
+                this.#hudRight.classList.add(egt.consts.class.TEXTRIGHT);
+                this.#hudContainer.appendChild(this.#hudRight);
+
+                    const rightSpan = document.createElement('span');
+                    this.#hudRight.appendChild(rightSpan);
+
+                        const rightWsPreserve = document.createElement('span');
+                        rightWsPreserve.classList.add(egt.consts.class.HUD_WSPRESERVE);
+                        rightWsPreserve.innerText = '_';
+                        rightSpan.appendChild(rightWsPreserve);
+
+                        this.#focusTyped = document.createElement('span');
+                        this.#focusTyped.classList.add(egt.consts.class.HUD_TYPEDFOCUS);
+                        rightSpan.appendChild(this.#focusTyped);
+
+                        this.#wrongText = document.createElement('span');
+                        this.#wrongText.classList.add(egt.consts.class.HUD_WRONG);
+                        rightSpan.appendChild(this.#wrongText);
+
+                        this.#focusUntyped = document.createElement('span');
+                        this.#focusUntyped.classList.add(egt.consts.class.HUD_FOCUS);
+                        rightSpan.appendChild(this.#focusUntyped);
+
+                        this.#untypedText = document.createElement('span');
+                        this.#untypedText.classList.add(egt.consts.class.HUD_UNTYPED);
+                        rightSpan.appendChild(this.#untypedText);
+    }
 }
 
 function buildHUD() {
     let hudAnchor = document.createElement('div');
     document.body.appendChild(hudAnchor);
-    let hudShadowRoot = hudAnchor.attachShadow({mode: 'open'});
+    let hudShadowRoot = hudAnchor.attachShadow({ mode: 'open' });
 
     const styleElem = addStyle(hudShadowRoot);
 
@@ -74,85 +145,8 @@ function buildHUD() {
     return hud;
 }
 
-function addContainer(hud, typeClass) {
-    const elem = hud.hudRoot;
-    const hudContainer = document.createElement('box');
-    hudContainer.classList.add(egt.consts.class.CONTAINER);
-    hudContainer.classList.add(typeClass);
-    elem.prepend(hudContainer);
 
-      const hudLeft = document.createElement('box');
-      hudLeft.classList.add(egt.consts.class.TEXTBOX);
-      hudLeft.classList.add(egt.consts.class.TEXTLEFT);
-      hudContainer.appendChild(hudLeft);
 
-        const leftSpan = document.createElement('span');
-        hudLeft.appendChild(leftSpan);
-  
-          const untypedLeft = document.createElement('span');
-          untypedLeft.classList.add(egt.consts.class.HUD_UNTYPED);
-          leftSpan.appendChild(untypedLeft);
-      
-          const typedText = document.createElement('span');
-          typedText.classList.add(egt.consts.class.HUD_TYPED);
-          leftSpan.appendChild(typedText);
-      
-          const leftWsPreserve = document.createElement('span');
-          leftWsPreserve.classList.add(egt.consts.class.HUD_WSPRESERVE);
-          leftWsPreserve.innerText = '_';
-          leftSpan.appendChild(leftWsPreserve);
-  
-      const hudRight = document.createElement('box');
-      hudRight.classList.add(egt.consts.class.TEXTBOX);
-      hudRight.classList.add(egt.consts.class.TEXTRIGHT);
-      hudContainer.appendChild(hudRight);
-
-        const rightSpan = document.createElement('span');
-        hudRight.appendChild(rightSpan);
-      
-          const rightWsPreserve = document.createElement  ('span');
-          rightWsPreserve.classList.add(egt.consts.class.  HUD_WSPRESERVE);
-          rightWsPreserve.innerText = '_';
-          rightSpan.appendChild(rightWsPreserve);
-  
-          const focusTyped = document.createElement('span');
-          focusTyped.classList.add(egt.consts.class.HUD_TYPEDFOCUS);
-          rightSpan.appendChild(focusTyped);   
-
-          const wrongText = document.createElement('span');
-          wrongText.classList.add(egt.consts.class.HUD_WRONG);
-          rightSpan.appendChild(wrongText);
-  
-          const focusUntyped = document.createElement('span');
-          focusUntyped.classList.add(egt.consts.class.HUD_FOCUS);
-          rightSpan.appendChild(focusUntyped); 
-    
-          const untypedText = document.createElement('span');
-          untypedText.classList.add(egt.consts.class.HUD_UNTYPED);
-          rightSpan.appendChild(untypedText);
-
-    const container = {
-        hudContainer,
-        hudLeft,
-        hudRight,
-        untypedLeft,
-        typedText,
-        focusTyped,
-        wrongText,
-        focusUntyped,
-        untypedText,
-    };
-
-    hud.containers.push(container);
-    return container;
-}
-
-function addRoot(elem) {
-    const hudRoot = document.createElement('box');
-    hudRoot.className = 'typext-hud-frame';
-    elem.appendChild(hudRoot);
-    return hudRoot;
-}
 
 function addStyle(elem) {
     const styleElem = document.createElement('link');
@@ -177,7 +171,7 @@ function setHUDHeight(height) {
     }
 
     let curHeight = egt.hud.containers.length;
-    if (Math.min(height, egt.consts.HUD_HEIGHT+1) === curHeight) {
+    if (Math.min(height, egt.consts.HUD_HEIGHT + 1) === curHeight) {
         return;
     }
 
@@ -190,7 +184,7 @@ function setHUDHeight(height) {
     }
 
     if (height > curHeight) {
-        for (let i=curHeight; i<Math.min(height,egt.consts.HUD_HEIGHT); ++i) {
+        for (let i = curHeight; i < Math.min(height, egt.consts.HUD_HEIGHT); ++i) {
             addContainer(egt.hud, egt.consts.class.WEAK);
         }
         if (height > egt.consts.HUD_HEIGHT) {
@@ -246,8 +240,8 @@ function setHUDTypingContent(idx, untypedLeft, typed, mistyped, untypedRight) {
             focusUntyped = untypedRight;
             untypedRight = '';
         } else {
-            focusUntyped = untypedRight.slice(0, untypedSpacePos+1);
-            untypedRight = untypedRight.slice(untypedSpacePos+1);
+            focusUntyped = untypedRight.slice(0, untypedSpacePos + 1);
+            untypedRight = untypedRight.slice(untypedSpacePos + 1);
         }
     }
     setHUDContent(idx, untypedLeft, typed, focusTyped, mistyped, focusUntyped, untypedRight);

@@ -41,173 +41,213 @@ class TypedHUD {
      */
     constructor(shadowRoot, visible) {
         this.#addRoot(shadowRoot, visible);
+        this.#addContainer(HUDContainer.DOMINANT_CLASS);
     }
 
     /** @type {Element} */
     #root;
-    /** @type {Element[]} */
+    /** @type {HUDContainer[]} */
     #containers;
+    /** @type {number} */
+    MAX_HEIGHT = 4;
 
+    /** @type {string} */
+    #FRAME_CLASS = 'typext-hud-frame';
     /**
      * 
      * @param {ShadowRoot} shadowRoot
      * @param {boolean} visible
      */
     #addRoot(shadowRoot, visible) {
-        const hudRoot = document.createElement('box');
-        hudRoot.className = 'typext-hud-frame';
-        hudRoot.style.display = visible ? 'block' : 'none';
-        shadowRoot.appendChild(hudRoot);
-        this.#root = hudRoot;
+        this.#root = document.createElement('box');
+        this.#root.className = this.#FRAME_CLASS;
+        if (visible) this.Show(); else this.Hide();
+        shadowRoot.appendChild(this.#root);
+    }
+
+    /**
+     * 
+     * @param {string} typeClass 
+     */
+    addContainer(typeClass) {
+        const newContainer = new HUDContainer(typeClass);
+        this.#containers.push(newContainer);
+        this.#root.prepend(newContainer);
+    }
+    
+    Show() {
+        this.#root.style.display = 'block';
+    }
+
+    Hide() {
+        this.#root.style.display = 'none';
+    }
+
+    /**
+     * 
+     * @param {number} height 
+     */
+    SetHeight(height) {
+        if (height === 0) {
+            console.error('HUD height was attempted to be set to 0!');
+            return;
+        }
+    
+        const curHeight = this.#containers.length;
+        if (Math.min(height, this.MAX_HEIGHT + 1) === curHeight) {
+            return;
+        }
+    
+        if (height < curHeight) {
+            while (height < this.#containers.length) {
+                let container = this.#containers.pop();
+                container.remove();
+            }
+            return;
+        }
+    
+        if (height > curHeight) {
+            for (let i = curHeight; i < Math.min(height, this.#containers.length); ++i) {
+                this.#addContainer(HUDContainer.WEAK_CLASS);
+            }
+            if (height > this.MAX_HEIGHT) {
+                addContainer(HUDContainer.OVERFLOWED_CLASS);
+            }
+        }
     }
 }
 
 class HUDContainer {
-    constructor() {
+    /** @type {string} */
+    static DOMINANT_CLASS = 'typext-hud-dominant';
+    /** @type {string} */
+    static WEAK_CLASS = 'typext-hud-weak';
+    /** @type {string} */
+    static OVERFLOWED_CLASS = 'typext-hud-overflowed',
+
+    /** @type {string} */
+    #CONTAINER_CLASS = 'typext-hud-container';
+    /** @type {string} */
+    #UNTYPED_CLASS = 'typext-hud-untyped';
+    /** @type {string} */
+    #TYPED_CLASS = 'typext-hud-typedtext';
+    /** @type {string} */
+    #TYPEDFOCUS_CLASS = 'typext-hud-focustypedtext';
+    /** @type {string} */
+    #WRONG_CLASS = 'typext-hud-wrongtext';
+    /** @type {string} */
+    #FOCUS_CLASS = 'typext-hud-focusword';
+    
+    /** @type {string} */
+    #TEXTBOX_CLASS = 'typext-hud-textbox';
+    /** @type {string} */
+    #TEXTLEFT_CLASS = 'typext-hud-textleft';
+    /** @type {string} */
+    #TEXTRIGHT_CLASS = 'typext-hud-textright';
+    /** @type {string} */
+    #WSPRESERVE_CLASS = 'typext-hud-wspreserver';
+
+    /**
+     * 
+     * @param {string} typeClass 
+     */
+    constructor(typeClass) {
         this.#hudContainer = document.createElement('box');
-        this.#hudContainer.classList.add(egt.consts.class.CONTAINER);
+        this.#hudContainer.classList.add(this.#CONTAINER_CLASS);
         this.#hudContainer.classList.add(typeClass);
 
             this.#hudLeft = document.createElement('box');
-            this.#hudLeft.classList.add(egt.consts.class.TEXTBOX);
-            this.#hudLeft.classList.add(egt.consts.class.TEXTLEFT);
+            this.#hudLeft.classList.add(this.#TEXTBOX_CLASS);
+            this.#hudLeft.classList.add(this.#TEXTLEFT_CLASS);
             this.#hudContainer.appendChild(hudLeft);
 
                 const leftSpan = document.createElement('span');
                 this.#hudLeft.appendChild(leftSpan);
 
                     this.#untypedLeft = document.createElement('span');
-                    this.#untypedLeft.classList.add(egt.consts.class.HUD_UNTYPED);
+                    this.#untypedLeft.classList.add(this.#UNTYPED_CLASS);
                     leftSpan.appendChild(this.#untypedLeft);
 
                         this.#typedText = document.createElement('span');
-                        this.#typedText.classList.add(egt.consts.class.HUD_TYPED);
+                        this.#typedText.classList.add(this.#TYPED_CLASS);
                         leftSpan.appendChild(this.#typedText);
 
                         const leftWsPreserve = document.createElement('span');
-                        leftWsPreserve.classList.add(egt.consts.class.HUD_WSPRESERVE);
+                        leftWsPreserve.classList.add(this.#WSPRESERVE_CLASS);
                         leftWsPreserve.innerText = '_';
                         leftSpan.appendChild(leftWsPreserve);
 
                 this.#hudRight = document.createElement('box');
-                this.#hudRight.classList.add(egt.consts.class.TEXTBOX);
-                this.#hudRight.classList.add(egt.consts.class.TEXTRIGHT);
+                this.#hudRight.classList.add(this.#TEXTBOX_CLASS);
+                this.#hudRight.classList.add(this.#TEXTRIGHT_CLASS);
                 this.#hudContainer.appendChild(this.#hudRight);
 
                     const rightSpan = document.createElement('span');
                     this.#hudRight.appendChild(rightSpan);
 
                         const rightWsPreserve = document.createElement('span');
-                        rightWsPreserve.classList.add(egt.consts.class.HUD_WSPRESERVE);
+                        rightWsPreserve.classList.add(this.#WSPRESERVE_CLASS);
                         rightWsPreserve.innerText = '_';
                         rightSpan.appendChild(rightWsPreserve);
 
                         this.#focusTyped = document.createElement('span');
-                        this.#focusTyped.classList.add(egt.consts.class.HUD_TYPEDFOCUS);
+                        this.#focusTyped.classList.add(this.#TYPEDFOCUS_CLASS);
                         rightSpan.appendChild(this.#focusTyped);
 
                         this.#wrongText = document.createElement('span');
-                        this.#wrongText.classList.add(egt.consts.class.HUD_WRONG);
+                        this.#wrongText.classList.add(this.#WRONG_CLASS);
                         rightSpan.appendChild(this.#wrongText);
 
                         this.#focusUntyped = document.createElement('span');
-                        this.#focusUntyped.classList.add(egt.consts.class.HUD_FOCUS);
+                        this.#focusUntyped.classList.add(this.#FOCUS_CLASS);
                         rightSpan.appendChild(this.#focusUntyped);
 
                         this.#untypedText = document.createElement('span');
-                        this.#untypedText.classList.add(egt.consts.class.HUD_UNTYPED);
+                        this.#untypedText.classList.add(this.#UNTYPED_CLASS);
                         rightSpan.appendChild(this.#untypedText);
     }
-}
 
-function buildHUD() {
-    let hudAnchor = document.createElement('div');
-    document.body.appendChild(hudAnchor);
-    let hudShadowRoot = hudAnchor.attachShadow({ mode: 'open' });
+    /** @type {Element} */
+    #hudContainer;
+    /** @type {Element} */
+    #hudLeft;
+    /** @type {Element} */
+    #hudRight;
+    /** @type {Element} */
+    #untypedLeft;
+    /** @type {Element} */
+    #typedText;
+    /** @type {Element} */
+    #focusTyped;
+    /** @type {Element} */
+    #wrongText;
+    /** @type {Element} */
+    #focusUntyped;
+    /** @type {Element} */
+    #untypedText;
 
-    const styleElem = addStyle(hudShadowRoot);
-
-
-    const hudRoot = addRoot(hudShadowRoot);
-    hudRoot.style.display = 'none';
-
-    const hud = {
-        hudAnchor,
-        hudShadowRoot,
-        hudRoot,
-        containers: [],
-    };
-
-    addContainer(hud, egt.consts.class.DOMINANT);
-    // addContainer(hud, egt.consts.class.WEAK);
-
-    egt.hud = hud;
-    return hud;
-}
-
-
-
-
-function addStyle(elem) {
-    const styleElem = document.createElement('link');
-    styleElem.setAttribute('rel', 'stylesheet');
-    styleElem.setAttribute('href', chrome.runtime.getURL('content_styles/content.css'));
-    elem.appendChild(styleElem);
-    return styleElem;
-}
-
-function showHUD() {
-    egt.hud.hudRoot.style.display = 'block';
-}
-
-function hideHUD() {
-    egt.hud.hudRoot.style.display = 'none';
-}
-
-function setHUDHeight(height) {
-    if (height === 0) {
-        console.error('HUD height was attempted to be set to 0!');
-        return;
+    Remove() {
+        this.#hudContainer.remove();
     }
 
-    let curHeight = egt.hud.containers.length;
-    if (Math.min(height, egt.consts.HUD_HEIGHT + 1) === curHeight) {
-        return;
+    #setSanitizeInnerText(el, str) {
+        el.innerText = str.replaceAll('\n', '⏎');
     }
 
-    if (height < curHeight) {
-        while (height < egt.hud.containers.length) {
-            let container = egt.hud.containers.pop();
-            container.hudContainer.remove();
+    // TODO proper jsdoc if possible
+    SetContent(untypedLeft, typed, focusTyped, mistyped, focusUntyped, untypedRight) {
+        // TODO maybe optimize enter sanitization, it could be slow...
+        if (untypedLeft !== null) {
+            this.#setSanitizeInnerText(this.#untypedLeft, untypedLeft);
         }
-        return;
-    }
-
-    if (height > curHeight) {
-        for (let i = curHeight; i < Math.min(height, egt.consts.HUD_HEIGHT); ++i) {
-            addContainer(egt.hud, egt.consts.class.WEAK);
-        }
-        if (height > egt.consts.HUD_HEIGHT) {
-            addContainer(egt.hud, egt.consts.class.OVERFLOWED);
-        }
+        this.#setSanitizeInnerText(this.#typedText, typed);
+        this.#setSanitizeInnerText(this.#focusTyped, focusTyped);
+        this.#setSanitizeInnerText(this.#wrongText, mistyped);
+        this.#setSanitizeInnerText(this.#focusUntyped, focusUntyped);
+        this.#setSanitizeInnerText(this.#untypedText, untypedRight);
     }
 }
 
-function setSanitizeInnerText(el, str) {
-    el.innerText = str.replaceAll('\n', '⏎');
-}
-
-function setHUDContent(idx, untypedLeft, typed, focusTyped, mistyped, focusUntyped, untypedRight) {
-    // TODO maybe optimize enter sanitization, it could be slow...
-    if (untypedLeft !== null) {
-        setSanitizeInnerText(egt.hud.containers[idx].untypedLeft, untypedLeft);
-    }
-    setSanitizeInnerText(egt.hud.containers[idx].typedText, typed);
-    setSanitizeInnerText(egt.hud.containers[idx].focusTyped, focusTyped);
-    setSanitizeInnerText(egt.hud.containers[idx].wrongText, mistyped);
-    setSanitizeInnerText(egt.hud.containers[idx].focusUntyped, focusUntyped);
-    setSanitizeInnerText(egt.hud.containers[idx].untypedText, untypedRight);
-}
 
 function setHUDTypingContent(idx, untypedLeft, typed, mistyped, untypedRight) {
     let focusTyped;

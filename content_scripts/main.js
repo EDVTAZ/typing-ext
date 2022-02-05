@@ -12,7 +12,7 @@ function handleKeyEvent(ev) {
     if (egt.state.mode === egt.consts.states.OFF) {
         if (ev.code === egt.consts.keys.F2) {
             egt.state.mode = egt.state.prevmode;
-            egt.showHUD();
+            egt.HUD.Show();
         }
         return;
     }
@@ -21,7 +21,7 @@ function handleKeyEvent(ev) {
         case egt.consts.keys.F2:
             egt.state.prevmode = egt.state.mode;
             egt.state.mode = egt.consts.states.OFF;
-            egt.hideHUD();
+            egt.HUD.Hide();
             break;
 
         case egt.consts.keys.Backspace:

@@ -29,8 +29,7 @@ function updateLookingHUD(state) {
         }
         if (state.coloredElements.length === 0) {
             state.focusedElement = null;
-            egt.setHUDHeight(1);
-            egt.setHUDContent(0, '', state.buffer, '', '', '', '');
+            egt.HUD.TypedHUD.SetContent([['', state.buffer, '', '', '', '']])
             return;
         }
 
@@ -39,19 +38,24 @@ function updateLookingHUD(state) {
     }
 
     let idx = state.coloredElements.indexOf(state.focusedElement);
-    let hudHeightCount = Math.min(egt.consts.HUD_HEIGHT, state.coloredElements.length);
-    egt.setHUDHeight(Math.min(egt.consts.HUD_HEIGHT+1, state.coloredElements.length));
+    let hudHeightCount = Math.min(TypedHUD.MAX_HEIGHT, state.coloredElements.length);
+    let newContent = [];
+    //egt.setHUDHeight(Math.min(egt.consts.HUD_HEIGHT+1, state.coloredElements.length));
 
     for (let i=idx; i<idx+hudHeightCount; ++i) {
+        console.log({i})
         const elText = state.coloredElements[i%state.coloredElements.length].innerText;
         let textpos = elText.indexOf(state.buffer);
-        egt.setHUDContent(i-idx,
+        newContent[i-idx] = [
             elText.slice(0, textpos),
             state.buffer,
             '', '', '',
             elText.slice(textpos+state.buffer.length)
-        );
+        ];
     }
+    console.log(newContent);
+    egt.HUD.TypedHUD.SetContent(newContent);
+
     egt.state.focusedElement?.scrollIntoView(egt.consts.SCROLL_OPT);
 }
 

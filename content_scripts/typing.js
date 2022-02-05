@@ -44,18 +44,19 @@ function eqChar(typed, real) {
 }
 
 function wrongcharTypingHUD() {
-    egt.setHUDTypingContent(0,
+    egt.HUD.TypedHUD.SetTypingContent(
         null,
         egt.state.buffer.slice(0, egt.state.buffer.length-egt.state.wrongCharCount),
         egt.state.lookAhead.slice(0, egt.state.wrongCharCount),
-        egt.state.lookAhead.slice(egt.state.wrongCharCount),
+        egt.state.lookAhead.slice(egt.state.wrongCharCount)
     );
 }
 
 function extendTypingHUD() {
     egt.state.lookAhead = egt.state.lookAhead.slice(1);
     updateLookAhead();
-    egt.setHUDTypingContent(0,
+    
+    egt.HUD.TypedHUD.SetTypingContent(
         null,
         egt.state.buffer,
         '',
@@ -134,7 +135,7 @@ function lockState(buffer, focusedElement) {
     lockElement(focusedElement, startPosition, buffer.length);
 
     egt.state.lookAhead = '';
-    egt.setHUDTypingContent(0,
+    egt.HUD.TypedHUD.SetTypingContent(
         focusedElement.innerText.slice(0, startPosition),
         buffer,
         '',
@@ -206,7 +207,7 @@ function backspaceTypingHUD() {
     }
     
     egt.state.lookAhead = egt.state.buffer.slice(-1) + egt.state.lookAhead;
-    egt.setHUDTypingContent(0,
+    egt.HUD.TypedHUD.SetTypingContent(
         null,
         egt.state.buffer.slice(0, -1),
         '',
@@ -217,7 +218,7 @@ function backspaceTypingHUD() {
 function unlockState() {
     egt.history.push(egt.state);
     egt.state = egt.initState(egt.consts.states.LOOKING);
-    egt.setHUDContent(0, '','','','','','');
+    egt.HUD.TypedHUD.SetContent([['','','','','','']]);
 }
 
 

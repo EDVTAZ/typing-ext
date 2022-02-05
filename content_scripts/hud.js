@@ -10,7 +10,7 @@ class HUD {
         this.#shadowRoot = this.#anchor.attachShadow({ mode: 'open' });
         this.#addStyle(this.#shadowRoot);
 
-        this.#typedHUD = new TypedHUD(visible);
+        this.TypedHUD = new TypedHUD(this.#shadowRoot, visible);
     }
 
     /** @type {Element} */
@@ -18,7 +18,7 @@ class HUD {
     /** @type {ShadowRoot} */
     #shadowRoot;
     /** @type {TypedHUD} */
-    #typedHUD;
+    TypedHUD;
 
     /**
      * @param {ShadowRoot} elem 
@@ -30,6 +30,14 @@ class HUD {
         styleElem.setAttribute('href', chrome.runtime.getURL('content_styles/content.css'));
         elem.appendChild(styleElem);
         return styleElem;
+    }
+
+    Show() {
+        this.TypedHUD.Show();
+    }
+    
+    Hide() {
+        this.TypedHUD.Hide();
     }
 }
 
@@ -47,9 +55,9 @@ class TypedHUD {
     /** @type {Element} */
     #root;
     /** @type {HUDContainer[]} */
-    #containers;
+    #containers = [];
     /** @type {number} */
-    MAX_HEIGHT = 4;
+    static MAX_HEIGHT = 4;
 
     /** @type {string} */
     #FRAME_CLASS = 'typext-hud-frame';
@@ -69,10 +77,10 @@ class TypedHUD {
      * 
      * @param {string} typeClass 
      */
-    addContainer(typeClass) {
+    #addContainer(typeClass) {
         const newContainer = new HUDContainer(typeClass);
         this.#containers.push(newContainer);
-        this.#root.prepend(newContainer);
+        newContainer.AttachTo(this.#root);
     }
     
     Show() {
@@ -92,28 +100,52 @@ class TypedHUD {
             console.error('HUD height was attempted to be set to 0!');
             return;
         }
-    
+        height = Math.min(height, TypedHUD.MAX_HEIGHT+1);
+
         const curHeight = this.#containers.length;
-        if (Math.min(height, this.MAX_HEIGHT + 1) === curHeight) {
+        if (height === curHeight) {
             return;
         }
     
         if (height < curHeight) {
             while (height < this.#containers.length) {
                 let container = this.#containers.pop();
-                container.remove();
+                container.Remove();
             }
             return;
         }
     
         if (height > curHeight) {
-            for (let i = curHeight; i < Math.min(height, this.#containers.length); ++i) {
+            for (let i = curHeight; i < Math.min(height, TypedHUD.MAX_HEIGHT); ++i) {
                 this.#addContainer(HUDContainer.WEAK_CLASS);
             }
-            if (height > this.MAX_HEIGHT) {
-                addContainer(HUDContainer.OVERFLOWED_CLASS);
+            if (height > TypedHUD.MAX_HEIGHT) {
+                this.#addContainer(HUDContainer.OVERFLOWED_CLASS);
             }
         }
+    }
+
+    /**
+     * 
+     * @param {object[]} content 
+     */
+    SetContent(content) {
+        this.SetHeight(content.length);
+        for (let idx in content) {
+            this.#containers[idx].SetContent(...content[idx]);
+        }
+    }
+
+    /**
+     * 
+     * @param {string} untypedLeft 
+     * @param {string} typed 
+     * @param {string} mistyped 
+     * @param {string} untypedRight 
+     */
+    SetTypingContent(untypedLeft, typed, mistyped, untypedRight) {
+        this.SetHeight(1);
+        this.#containers[0].SetTypingContent(untypedLeft, typed, mistyped, untypedRight)
     }
 }
 
@@ -123,7 +155,7 @@ class HUDContainer {
     /** @type {string} */
     static WEAK_CLASS = 'typext-hud-weak';
     /** @type {string} */
-    static OVERFLOWED_CLASS = 'typext-hud-overflowed',
+    static OVERFLOWED_CLASS = 'typext-hud-overflowed';
 
     /** @type {string} */
     #CONTAINER_CLASS = 'typext-hud-container';
@@ -159,7 +191,7 @@ class HUDContainer {
             this.#hudLeft = document.createElement('box');
             this.#hudLeft.classList.add(this.#TEXTBOX_CLASS);
             this.#hudLeft.classList.add(this.#TEXTLEFT_CLASS);
-            this.#hudContainer.appendChild(hudLeft);
+            this.#hudContainer.appendChild(this.#hudLeft);
 
                 const leftSpan = document.createElement('span');
                 this.#hudLeft.appendChild(leftSpan);
@@ -230,11 +262,32 @@ class HUDContainer {
         this.#hudContainer.remove();
     }
 
+    /**
+     * 
+     * @param {Element} root 
+     */
+    AttachTo(root) {
+        root.prepend(this.#hudContainer);
+    }
+
+    /**
+     * 
+     * @param {Element} el 
+     * @param {string} str 
+     */
     #setSanitizeInnerText(el, str) {
         el.innerText = str.replaceAll('\n', '⏎');
     }
 
-    // TODO proper jsdoc if possible
+    /**
+     * 
+     * @param {string} untypedLeft 
+     * @param {string} typed 
+     * @param {string} focusTyped 
+     * @param {string} mistyped 
+     * @param {string} focusUntyped 
+     * @param {string} untypedRight 
+     */
     SetContent(untypedLeft, typed, focusTyped, mistyped, focusUntyped, untypedRight) {
         // TODO maybe optimize enter sanitization, it could be slow...
         if (untypedLeft !== null) {
@@ -246,51 +299,51 @@ class HUDContainer {
         this.#setSanitizeInnerText(this.#focusUntyped, focusUntyped);
         this.#setSanitizeInnerText(this.#untypedText, untypedRight);
     }
-}
 
-
-function setHUDTypingContent(idx, untypedLeft, typed, mistyped, untypedRight) {
-    let focusTyped;
-    let focusUntyped;
-
-    const spaceRegex = /\s/g;
-    let untypedSpacePos = untypedRight.search(spaceRegex);
-    let mistypedSpacePos = mistyped.search(spaceRegex);
-
-    let typedSpacePos = -1;
-    if (typed.length > 120) {
-        typed = typed.slice(-120);
-    }
-    spaceRegex.test(typed);
-    while (spaceRegex.lastIndex > 0) {
-        typedSpacePos = spaceRegex.lastIndex;
-        spaceRegex.test(typed);
-    }
-
-    if (typedSpacePos === -1) {
-        typedSpacePos = 0;
-    }
-    focusTyped = typed.slice(typedSpacePos);
-    typed = typed.slice(0, typedSpacePos);
-
-    if (mistypedSpacePos !== -1) {
-        focusUntyped = '';
-    } else {
-        if (untypedSpacePos === -1) {
-            focusUntyped = untypedRight;
-            untypedRight = '';
-        } else {
-            focusUntyped = untypedRight.slice(0, untypedSpacePos + 1);
-            untypedRight = untypedRight.slice(untypedSpacePos + 1);
+    /**
+     * 
+     * @param {string} untypedLeft 
+     * @param {string} typed 
+     * @param {string} mistyped 
+     * @param {string} untypedRight 
+     */
+    SetTypingContent(untypedLeft, typed, mistyped, untypedRight) {
+        let focusTyped;
+        let focusUntyped;
+    
+        const spaceRegex = /\s/g;
+        const untypedSpacePos = untypedRight.search(spaceRegex);
+        const mistypedSpacePos = mistyped.search(spaceRegex);
+    
+        let typedSpacePos = -1;
+        if (typed.length > 120) {
+            typed = typed.slice(-120);
         }
+        spaceRegex.test(typed);
+        while (spaceRegex.lastIndex > 0) {
+            typedSpacePos = spaceRegex.lastIndex;
+            spaceRegex.test(typed);
+        }
+    
+        if (typedSpacePos === -1) {
+            typedSpacePos = 0;
+        }
+        focusTyped = typed.slice(typedSpacePos);
+        typed = typed.slice(0, typedSpacePos);
+    
+        if (mistypedSpacePos !== -1) {
+            focusUntyped = '';
+        } else {
+            if (untypedSpacePos === -1) {
+                focusUntyped = untypedRight;
+                untypedRight = '';
+            } else {
+                focusUntyped = untypedRight.slice(0, untypedSpacePos + 1);
+                untypedRight = untypedRight.slice(untypedSpacePos + 1);
+            }
+        }
+        this.SetContent(untypedLeft, typed, focusTyped, mistyped, focusUntyped, untypedRight);
     }
-    setHUDContent(idx, untypedLeft, typed, focusTyped, mistyped, focusUntyped, untypedRight);
 }
 
-buildHUD()
-egt.showHUD = showHUD;
-egt.hideHUD = hideHUD;
-egt.addContainer = addContainer;
-egt.setHUDHeight = setHUDHeight;
-egt.setHUDContent = setHUDContent;
-egt.setHUDTypingContent = setHUDTypingContent;
+egt.HUD = new HUD();

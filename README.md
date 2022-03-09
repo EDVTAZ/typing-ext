@@ -19,3 +19,5 @@
 * remembering state between reloads
 ---
 * autopilot mode for quick reading with different hud (centered word, bigger, configurable speed)
+---
+* webcomponents, css custom properties (variables)

@@ -48,3 +48,11 @@ This was a hobby project for me to learn more about browser extensions a few yea
 ---
 
 - webcomponents for HUD, etc.
+
+- autopilot mode for quick reading with different hud (centered word, bigger, configurable speed)
+
+---
+
+- webcomponents, css custom properties (variables)
+
+- unicode normalization /nkfc
